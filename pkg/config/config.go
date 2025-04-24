@@ -24,8 +24,8 @@ type Config struct {
 
 	ADCCsPin    int     `toml:"adc_cs_pin"`
 	ADCVBatt    int     `toml:"adc_v_batt"`
-	ADCVDivider float32 `toml:"adc_v_divider"`
-	ADCVMult    float32 `toml:"adc_v_multiplier"`
+	ADCVDivider float64 `toml:"adc_v_divider"`
+	ADCVMult    float64 `toml:"adc_v_multiplier"`
 
 	TempInternalAddr string `toml:"temp_int_addr"`
 	TempExternalAddr string `toml:"temp_ext_addr"`

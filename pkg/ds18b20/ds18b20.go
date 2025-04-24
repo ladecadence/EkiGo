@@ -9,7 +9,7 @@ import (
 
 type DS18B20 struct {
 	Device string
-	Temp   float32
+	Temp   float64
 }
 
 func (ds *DS18B20) Init(dev string) {
@@ -17,7 +17,7 @@ func (ds *DS18B20) Init(dev string) {
 	ds.Temp = 999.99
 }
 
-func (ds *DS18B20) Read() (float32, error) {
+func (ds *DS18B20) Read() (float64, error) {
 	// try to open the device
 	buf, err := os.ReadFile(ds.Device)
 	if err != nil {
@@ -44,6 +44,6 @@ func (ds *DS18B20) Read() (float32, error) {
 	}
 
 	// ok, return the float
-	ds.Temp = float32(temp) / 1000.0
+	ds.Temp = float64(temp) / 1000.0
 	return ds.Temp, nil
 }
