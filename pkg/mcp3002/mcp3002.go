@@ -32,7 +32,7 @@ func New(cs uint8, ch int) (MCP3002, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpio.SpiEnd(rpio.Spi0)
+	rpio.SpiEnd(channel)
 	rpio.Close()
 	return &adc, nil
 }
