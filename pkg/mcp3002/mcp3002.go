@@ -65,7 +65,7 @@ func (m *mcp3002) Read(channel uint8) (uint32, error) {
 	result |= (uint32(txBuf[1]) & 0xff) << 1
 	result |= (uint32(txBuf[2]) & 0x80) >> 7
 
-	rpio.SpiEnd(rpio.Spi0)
+	rpio.SpiEnd(rpio.SpiDev(m.channel))
 	rpio.Close()
 	return result, nil
 }
