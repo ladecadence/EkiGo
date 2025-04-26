@@ -2,6 +2,7 @@ package gps
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -130,7 +131,7 @@ func (g *gps) Update() error {
 	for g.lineGGA == "" {
 		n := 0
 		for char[0] != '\n' {
-			_, err := g.port.Read(buf)
+			_, err := g.port.Read(char)
 			if err != nil {
 				return err
 			}
@@ -158,7 +159,7 @@ func (g *gps) Update() error {
 	for g.lineRMC == "" {
 		n := 0
 		for char[0] != '\n' {
-			_, err := g.port.Read(buf)
+			_, err := g.port.Read(char)
 			if err != nil {
 				return err
 			}
@@ -168,6 +169,7 @@ func (g *gps) Update() error {
 				n = 0
 			}
 		}
+		fmt.Printf("Buf: %v\n", buf)
 		// try to find GGA data
 		data := string(buf[:])
 		if strings.Contains(data, "$GPRMC") {
