@@ -13,24 +13,33 @@ const (
 	LogClean
 )
 
-type Logging struct {
-	Filename string
+type Logging interface {
+	Log(int, string) error
+	Filename() string
 }
 
-func New(n string) error {
-	l := Logging{}
-	l.Filename = n + time.Now().Format(time.RFC3339) + ".log"
-	f, err := os.Create(l.Filename)
+type logging struct {
+	filename string
+}
+
+func New(n string) (Logging, error) {
+	l := logging{}
+	l.filename = n + "-" + time.Now().Format(time.RFC3339) + ".log"
+	f, err := os.Create(l.filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer f.Close()
 
-	return nil
+	return &l, nil
 }
 
-func (l *Logging) Log(logType int, msg string) error {
-	f, err := os.OpenFile(l.Filename, os.O_APPEND|os.O_WRONLY, 0644)
+func (l *logging) Filename() string {
+	return l.filename
+}
+
+func (l *logging) Log(logType int, msg string) error {
+	f, err := os.OpenFile(l.filename, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
