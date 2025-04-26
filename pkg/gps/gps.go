@@ -60,7 +60,7 @@ type gps struct {
 	conn    conn.Conn
 }
 
-func New(port string, speed uint) (GPS, error) {
+func New(portFile string, speed uint) (GPS, error) {
 	// default values
 	g := gps{
 		time:    "",
@@ -92,7 +92,7 @@ func New(port string, speed uint) (GPS, error) {
 	// }
 
 	// open port
-	p, err := uartreg.Open(port)
+	p, err := uartreg.Open(portFile)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func New(port string, speed uint) (GPS, error) {
 	g.port = p
 
 	// create connection
-	c, err := p.Connect(physic.Hertz*physic.Frequency(speed), uart.One, uart.NoParity, uart.RTSCTS, 8)
+	c, err := g.port.Connect(physic.Hertz*physic.Frequency(speed), uart.One, uart.NoParity, uart.RTSCTS, 8)
 	if err != nil {
 		return nil, err
 	}
