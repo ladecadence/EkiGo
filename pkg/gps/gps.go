@@ -123,14 +123,14 @@ func (g *gps) Close() error {
 
 func (g *gps) Update() error {
 	// Serial buffer
-	buf := make([]byte, 1024)
+	buf := make([]byte, 512)
 	char := make([]byte, 1)
 
 	// start parsing buffer
 	g.lineGGA = ""
 	for g.lineGGA == "" {
 		n := 0
-		for range 1024 {
+		for range 512 {
 			_, err := g.port.Read(char)
 			if err != nil {
 				return err
@@ -157,7 +157,7 @@ func (g *gps) Update() error {
 	g.lineRMC = ""
 	for g.lineRMC == "" {
 		n := 0
-		for range 1024 {
+		for range 512 {
 			_, err := g.port.Read(char)
 			if err != nil {
 				return err
