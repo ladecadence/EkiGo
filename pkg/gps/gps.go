@@ -123,13 +123,22 @@ func (g *gps) Close() error {
 func (g *gps) Update() error {
 	// Serial buffer
 	buf := make([]byte, 1024)
+	char := make([]byte, 1)
 
 	// start parsing buffer
 	g.lineGGA = ""
 	for g.lineGGA == "" {
-		_, err := g.port.Read(buf)
-		if err != nil {
-			return err
+		n := 0
+		for char[0] != '\n' {
+			_, err := g.port.Read(buf)
+			if err != nil {
+				return err
+			}
+			buf[n] = char[0]
+			n += 1
+			if n > len(buf)-1 {
+				n = 0
+			}
 		}
 		// try to find GGA data
 		data := string(buf[:])
@@ -147,9 +156,17 @@ func (g *gps) Update() error {
 	// now RMC line
 	g.lineRMC = ""
 	for g.lineRMC == "" {
-		_, err := g.port.Read(buf)
-		if err != nil {
-			return err
+		n := 0
+		for char[0] != '\n' {
+			_, err := g.port.Read(buf)
+			if err != nil {
+				return err
+			}
+			buf[n] = char[0]
+			n += 1
+			if n > len(buf)-1 {
+				n = 0
+			}
 		}
 		// try to find GGA data
 		data := string(buf[:])
