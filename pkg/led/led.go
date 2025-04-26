@@ -72,9 +72,9 @@ func (l *led) BlinkError() error {
 	go func() {
 		for range 5 {
 			l.Pin.Out(gpio.High)
-			time.Sleep(time.Millisecond)
+			time.Sleep(time.Millisecond * 5)
 			l.Pin.Out(gpio.Low)
-			time.Sleep(time.Millisecond)
+			time.Sleep(time.Millisecond * 5)
 		}
 		// keep on
 		l.Pin.Out(gpio.High)
