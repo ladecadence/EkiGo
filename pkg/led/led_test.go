@@ -20,10 +20,14 @@ func TestLed(t *testing.T) {
 	}
 
 	time.Sleep(time.Second * 2)
+
 	// error
 	fmt.Println("Error blink")
 	err = led.BlinkError()
 	if err != nil {
 		t.Errorf("Problem error blinking LED: %v", err)
 	}
+
+	// Wait so we can see it
+	time.Sleep(time.Second * 2)
 }
