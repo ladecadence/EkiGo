@@ -141,6 +141,7 @@ func (g *gps) Update() error {
 				n = 0
 			}
 		}
+		fmt.Printf("Buf: %v\n", buf)
 		// try to find GGA data
 		data := string(buf[:])
 		if strings.Contains(data, "$GPGGA") {
@@ -169,7 +170,6 @@ func (g *gps) Update() error {
 				n = 0
 			}
 		}
-		fmt.Printf("Buf: %v\n", buf)
 		// try to find GGA data
 		data := string(buf[:])
 		if strings.Contains(data, "$GPRMC") {
