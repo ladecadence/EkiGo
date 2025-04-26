@@ -7,6 +7,8 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
+	periph.io/x/conn/v3 v3.7.2
+	periph.io/x/host/v3 v3.8.5
 )
 
 require (
