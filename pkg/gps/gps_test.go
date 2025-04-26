@@ -11,15 +11,18 @@ func TestGPS(t *testing.T) {
 		t.Errorf("Error starting GPS: %v", err)
 	}
 
-	defer gps.Close()
-	fmt.Println("GPS Started")
-	err = gps.Update()
-	if err != nil {
-		t.Errorf("Error updating GPS: %v", err)
+	if gps != nil {
+		defer gps.Close()
+		fmt.Println("GPS Started")
+		err = gps.Update()
+		if err != nil {
+			t.Errorf("Error updating GPS: %v", err)
+		}
+		h, m, s, err := gps.Time()
+		if err != nil {
+			t.Errorf("Error reading GPS time: %v", err)
+		} else {
+			fmt.Printf("GPS time: %v %v %v\n", h, m, s)
+		}
 	}
-	h, m, s, err := gps.Time()
-	if err != nil {
-		t.Errorf("Error reading GPS time: %v", err)
-	}
-	fmt.Printf("GPS time: %v %v %v\n", h, m, s)
 }
