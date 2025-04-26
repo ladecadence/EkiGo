@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/driver/host"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/spi"
 	"periph.io/x/conn/v3/spi/spireg"
@@ -23,7 +23,7 @@ func New(cs uint8, ch int) (MCP3002, error) {
 	adc := mcp3002{csel: cs, channel: ch}
 
 	// test that we can access the device
-	if _, err := driverreg.Init(); err != nil {
+	if _, err := host.Init(); err != nil {
 		return nil, err
 	}
 
