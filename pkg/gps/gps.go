@@ -144,7 +144,7 @@ func (g *gps) Update() error {
 
 		// try to find GGA data
 		data := string(buf[:])
-		fmt.Printf("Data: %v\n", data)
+		fmt.Printf("Data: %s\n", data)
 		if strings.Contains(data, "$GPGGA") {
 			// cut to the start
 			data = data[strings.Index(data, "$GPGGA"):]
@@ -173,7 +173,7 @@ func (g *gps) Update() error {
 		}
 		// try to find GGA data
 		data := string(buf[:])
-		fmt.Printf("Data: %v\n", data)
+		fmt.Printf("Data: %s\n", data)
 		if strings.Contains(data, "$GPRMC") {
 			// cut to the start
 			data = data[strings.Index(data, "$GPRMC"):]
