@@ -76,7 +76,7 @@ func (m *mcp3002) Read(channel uint8) (uint32, error) {
 	defer p.Close()
 
 	// try to create a connection with parameters
-	c, err := p.Connect(physic.MegaHertz, spi.Mode0, 8)
+	c, err := p.Connect(physic.KiloHertz*488, spi.Mode0, 8)
 	if err != nil {
 		return 0, err
 	}
