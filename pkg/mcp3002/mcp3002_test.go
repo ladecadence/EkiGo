@@ -12,6 +12,7 @@ func TestADC(t *testing.T) {
 	}
 
 	if adc != nil {
+		fmt.Println("ADC Started")
 		value, err := adc.Read(0)
 		if err != nil {
 			t.Errorf("Error reading ADC: %v", err)
