@@ -2,9 +2,12 @@ package led
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
-	"github.com/stianeikeland/go-rpio/v4"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/host/v3"
 )
 
 type LED interface {
@@ -13,22 +16,27 @@ type LED interface {
 }
 
 type led struct {
-	Pin   rpio.Pin
+	Pin   gpio.PinIO
 	Ready bool
 }
 
 func New(pin int) (LED, error) {
 	l := led{Ready: false}
 
-	if err := rpio.Open(); err != nil {
+	// get state TODO
+	_, err := host.Init()
+	if err != nil {
 		return nil, err
 	}
+	// if err := rpio.Open(); err != nil {
+	// 	return nil, err
+	// }
 	// Unmap gpio memory when done
-	defer rpio.Close()
+	//defer rpio.Close()
 
 	// configure
-	l.Pin = rpio.Pin(pin)
-	l.Pin.Output()
+	l.Pin = gpioreg.ByName(fmt.Sprintf("%d", pin))
+	l.Pin.Out(gpio.Low)
 	l.Ready = true
 	return &l, nil
 }
@@ -37,16 +45,16 @@ func (l *led) Blink() error {
 	if !l.Ready {
 		return errors.New("LED GPIO Not initialized")
 	}
-	if err := rpio.Open(); err != nil {
-		return err
-	}
+	// if err := rpio.Open(); err != nil {
+	// 	return err
+	// }
 	// Unmap gpio memory when done
-	defer rpio.Close()
+	//defer rpio.Close()
 
 	go func() {
-		l.Pin.High()
+		l.Pin.Out(gpio.High)
 		time.Sleep(time.Millisecond)
-		l.Pin.Low()
+		l.Pin.Out(gpio.Low)
 	}()
 	return nil
 }
@@ -55,21 +63,21 @@ func (l *led) BlinkError() error {
 	if !l.Ready {
 		return errors.New("LED GPIO Not initialized")
 	}
-	if err := rpio.Open(); err != nil {
-		return err
-	}
-	// Unmap gpio memory when done
-	defer rpio.Close()
+	// if err := rpio.Open(); err != nil {
+	// 	return err
+	// }
+	// // Unmap gpio memory when done
+	// defer rpio.Close()
 
 	go func() {
 		for range 5 {
-			l.Pin.High()
+			l.Pin.Out(gpio.High)
 			time.Sleep(time.Millisecond)
-			l.Pin.Low()
+			l.Pin.Out(gpio.Low)
 			time.Sleep(time.Millisecond)
 		}
 		// keep on
-		l.Pin.High()
+		l.Pin.Out(gpio.High)
 	}()
 	return nil
 }
