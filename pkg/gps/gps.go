@@ -29,7 +29,7 @@ const (
 )
 
 type GPS interface {
-	//Close() error
+	Close() error
 	Update() error
 	Lat() float64
 	NS() string
