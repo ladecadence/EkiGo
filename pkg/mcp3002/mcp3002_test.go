@@ -11,9 +11,11 @@ func TestADC(t *testing.T) {
 		t.Errorf("Error starting ADC: %v", err)
 	}
 
-	value, err := adc.Read(0)
-	if err != nil {
-		t.Errorf("Error reading ADC: %v", err)
+	if adc != nil {
+		value, err := adc.Read(0)
+		if err != nil {
+			t.Errorf("Error reading ADC: %v", err)
+		}
+		fmt.Printf("ADC value: %d\n", value)
 	}
-	fmt.Printf("ADC value: %d\n", value)
 }
