@@ -6,11 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"periph.io/x/conn/v3"
-	"periph.io/x/conn/v3/physic"
-	"periph.io/x/conn/v3/uart"
-	"periph.io/x/conn/v3/uart/uartreg"
-	"periph.io/x/host/v3"
+	"go.bug.st/serial"
 )
 
 const (
@@ -56,11 +52,10 @@ type gps struct {
 	lineGGA string
 	lineRMC string
 	date    string
-	port    uart.PortCloser
-	conn    conn.Conn
+	port    serial.Port
 }
 
-func New(portFile string, speed uint) (GPS, error) {
+func New(portFile string, speed int) (GPS, error) {
 	// default values
 	g := gps{
 		time:    "",
@@ -79,8 +74,11 @@ func New(portFile string, speed uint) (GPS, error) {
 	}
 
 	// prepare port
-	if _, err := host.Init(); err != nil {
-		return nil, err
+	mode := &serial.Mode{
+		BaudRate: speed,
+		Parity:   serial.NoParity,
+		DataBits: 8,
+		StopBits: serial.OneStopBit,
 	}
 
 	// options := serial.OpenOptions{
@@ -92,19 +90,11 @@ func New(portFile string, speed uint) (GPS, error) {
 	// }
 
 	// open port
-	p, err := uartreg.Open(portFile)
+	var err error
+	g.port, err = serial.Open("/dev/ttyUSB0", mode)
 	if err != nil {
 		return nil, err
 	}
-	//defer p.Close()
-	g.port = p
-
-	// create connection
-	c, err := g.port.Connect(physic.Hertz*physic.Frequency(speed), uart.One, uart.NoParity, uart.RTSCTS, 8)
-	if err != nil {
-		return nil, err
-	}
-	g.conn = c
 
 	// var err error
 	// g.port, err = serial.Open(options)
@@ -137,7 +127,7 @@ func (g *gps) Update() error {
 	// start parsing buffer
 	g.lineGGA = ""
 	for g.lineGGA == "" {
-		err := g.conn.Tx(nil, buf)
+		_, err := g.port.Read(buf)
 		if err != nil {
 			return err
 		}
@@ -157,7 +147,7 @@ func (g *gps) Update() error {
 	// now RMC line
 	g.lineRMC = ""
 	for g.lineRMC == "" {
-		err := g.conn.Tx(nil, buf)
+		_, err := g.port.Read(buf)
 		if err != nil {
 			return err
 		}
