@@ -66,15 +66,10 @@ func (m *mcp3002) Read(channel uint8) (uint32, error) {
 		return 0, errors.New("Wrong MCP3002 channel")
 	}
 
-	var spiChan = ""
-	if m.channel == 0 {
-		spiChan = "0"
-	} else {
-		spiChan = "1"
-	}
+	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", m.channel, m.csel)
 
 	// open port
-	p, err := spireg.Open(spiChan)
+	p, err := spireg.Open(spiDev)
 	if err != nil {
 		return 0, err
 	}
