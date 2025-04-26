@@ -6,7 +6,7 @@ import (
 )
 
 func TestGPS(t *testing.T) {
-	gps, err := New("/dev/ttyAMA0", 9600)
+	gps, err := New("/dev/serial0", 9600)
 	if err != nil {
 		t.Errorf("Error starting GPS: %v", err)
 	}
