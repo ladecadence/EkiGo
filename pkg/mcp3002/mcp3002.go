@@ -102,9 +102,9 @@ func (m *mcp3002) Read(channel uint8) (uint32, error) {
 
 	// convert value
 	var result uint32
-	result = (uint32(txBuf[0]) & 0x01) << 9
-	result |= (uint32(txBuf[1]) & 0xff) << 1
-	result |= (uint32(txBuf[2]) & 0x80) >> 7
+	result = (uint32(rxBuf[0]) & 0x01) << 9
+	result |= (uint32(rxBuf[1]) & 0xff) << 1
+	result |= (uint32(rxBuf[2]) & 0x80) >> 7
 	fmt.Println(txBuf)
 	fmt.Println(rxBuf)
 
