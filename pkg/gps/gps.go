@@ -130,16 +130,13 @@ func (g *gps) Update() error {
 	g.lineGGA = ""
 	for g.lineGGA == "" {
 		n := 0
-		for char[0] != '\n' {
+		for range 1024 {
 			_, err := g.port.Read(char)
 			if err != nil {
 				return err
 			}
 			buf[n] = char[0]
 			n += 1
-			if n > len(buf)-1 {
-				n = 0
-			}
 		}
 
 		// try to find GGA data
@@ -160,16 +157,13 @@ func (g *gps) Update() error {
 	g.lineRMC = ""
 	for g.lineRMC == "" {
 		n := 0
-		for char[0] != '\n' {
+		for range 1024 {
 			_, err := g.port.Read(char)
 			if err != nil {
 				return err
 			}
 			buf[n] = char[0]
 			n += 1
-			if n > len(buf)-1 {
-				n = 0
-			}
 		}
 		// try to find GGA data
 		data := string(buf[:])
