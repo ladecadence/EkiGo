@@ -91,7 +91,7 @@ func New(portFile string, speed int) (GPS, error) {
 
 	// open port
 	var err error
-	g.port, err = serial.Open("/dev/ttyUSB0", mode)
+	g.port, err = serial.Open(portFile, mode)
 	if err != nil {
 		return nil, err
 	}
