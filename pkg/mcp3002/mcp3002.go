@@ -110,5 +110,5 @@ func (m *mcp3002) Read(channel uint8) (uint32, error) {
 
 	//rpio.SpiEnd(rpio.SpiDev(m.channel))
 	//rpio.Close()
-	return result, nil
+	return result & 0x3ff, nil
 }
