@@ -2,6 +2,7 @@ package mcp3002
 
 import (
 	"errors"
+	"fmt"
 
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/physic"
@@ -26,15 +27,10 @@ func New(cs uint8, ch int) (MCP3002, error) {
 		return nil, err
 	}
 
-	var spiChan = ""
-	if adc.channel == 0 {
-		spiChan = "0"
-	} else {
-		spiChan = "1"
-	}
+	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", adc.channel, adc.csel)
 
 	// open port
-	p, err := spireg.Open(spiChan)
+	p, err := spireg.Open(spiDev)
 	if err != nil {
 		return nil, err
 	}
