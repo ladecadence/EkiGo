@@ -107,7 +107,7 @@ func New(portFile string, speed int) (GPS, error) {
 }
 
 func (g *gps) Close() error {
-	err := g.Close()
+	err := g.port.Close()
 	if err != nil {
 		return err
 	}
