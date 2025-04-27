@@ -250,12 +250,11 @@ func (g *gps) Time() (int, int, int, error) {
 	if len(g.time) >= 6 {
 		hour, err := strconv.Atoi(g.time[0:2])
 		minute, err := strconv.Atoi(g.time[2:4])
-		second, err := strconv.Atoi(g.time[4:])
-		fmt.Printf("%s, %d, %d, %d\n", g.time, hour, minute, second)
+		second, err := strconv.ParseFloat(g.time[4:], 64)
 		if err != nil {
 			return 0, 0, 0, errors.New("GPS time parse fields error")
 		}
-		return hour, minute, second, nil
+		return hour, minute, int(second), nil
 	} else {
 		return 0, 0, 0, errors.New("GPS time parse error")
 	}
