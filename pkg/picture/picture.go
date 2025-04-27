@@ -30,7 +30,8 @@ func New(num uint8, name string, path string) Picture {
 	return Picture{
 		Number:   num,
 		Basename: name,
-		Path:     path + name + string(num) + ".jpg",
+		Filename: path + name + string(num) + ".jpg",
+		Path:     path,
 		captured: false,
 	}
 }
