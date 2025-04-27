@@ -20,7 +20,7 @@ type led struct {
 	Ready bool
 }
 
-func New(pin int) (LED, error) {
+func New(pin uint8) (LED, error) {
 	l := led{Ready: false}
 
 	// get state TODO
