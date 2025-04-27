@@ -195,6 +195,7 @@ func (m *mission) SendTelemetry() error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%s\n", m.telem.CsvString())
 	fmt.Printf("%s\n", m.telem.AprsString())
 	err = m.lora.Send([]uint8(m.telem.AprsString()))
 	if err != nil {
