@@ -173,9 +173,9 @@ func (m *ms5607) Update() error {
 }
 
 func (m *ms5607) GetTemp() float64 {
-	return m.temp / 100.0
+	return m.temp / 100.0 // ºC
 }
 
 func (m *ms5607) GetPres() float64 {
-	return m.p
+	return m.p / 100.0 // mBar
 }
