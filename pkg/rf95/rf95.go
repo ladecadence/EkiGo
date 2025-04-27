@@ -263,9 +263,9 @@ func (r *rf95) openSPI() error {
 	// rpio.SpiChipSelect(r.channel) // Select CS
 	// return nil
 	// test that we can access the device
-	if _, err := host.Init(); err != nil {
-		return err
-	}
+	// if _, err := host.Init(); err != nil {
+	// 	return err
+	// }
 
 	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", r.channel, r.csel)
 
