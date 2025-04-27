@@ -56,7 +56,10 @@ func main() {
 			// check for commands TODO
 
 			// send telemetry
-			mission.UpdateTelemetry(conf)
+			err := mission.UpdateTelemetry(conf)
+			if err != nil {
+				fmt.Printf("Error updating telemetry: %v\n", err)
+			}
 			fmt.Println("Updated telemetry")
 			mission.SendTelemetry()
 
