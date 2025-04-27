@@ -25,13 +25,13 @@ adc_v_batt = 0
 adc_v_divider = 3.2
 adc_v_multiplier = 1.07
 
-temp_internal_addr = '28-041682c3dbff'
-temp_external_addr = '28-0316b56c09ff' 
+temp_int_addr = '28-041682c3dbff'
+temp_ext_addr = '28-0316b56c09ff' 
 
 baro_i2c_bus = 1
 baro_i2c_addr = 0x77
 
-path_main_dir = '/home/pi/MISSION/'
+path_main_dir = '/home/pi/eki2/'
 path_images_dir = 'images/'
 path_log_prefix = 'missionlog'
 
