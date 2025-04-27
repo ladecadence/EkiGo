@@ -2,8 +2,14 @@ package rf95
 
 import (
 	"errors"
+	"fmt"
 
-	"github.com/stianeikeland/go-rpio/v4"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/spi"
+	"periph.io/x/conn/v3/spi/spireg"
+	"periph.io/x/host/v3"
 )
 
 const (
@@ -233,43 +239,73 @@ type rf95 struct {
 	rxBufValid   bool
 	spiCh        uint8
 	channel      uint8
+	csel         uint8
 	intPinNumber uint8
-	intPin       rpio.Pin
+	intPin       gpio.PinIO
 	useInt       bool
 	cad          uint8
+	port         spi.PortCloser
+	conn         spi.Conn
 }
 
 func (r *rf95) openSPI() error {
 	// try to open spi and configure radio
-	err := rpio.Open()
+	// err := rpio.Open()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// err = rpio.SpiBegin(rpio.Spi0)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// rpio.SpiChipSelect(r.channel) // Select CS
+	// return nil
+	// test that we can access the device
+	if _, err := host.Init(); err != nil {
+		return err
+	}
+
+	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", r.channel, r.csel)
+
+	// open port
+	var err error
+	r.port, err = spireg.Open(spiDev)
+	if err != nil {
+		return err
+	}
+	//defer p.Close()
+
+	// try to create a connection with parameters
+	r.conn, err = r.port.Connect(physic.MegaHertz, spi.Mode0, 8)
 	if err != nil {
 		return err
 	}
 
-	err = rpio.SpiBegin(rpio.Spi0)
-	if err != nil {
-		return err
-	}
-
-	rpio.SpiChipSelect(r.channel) // Select CS
 	return nil
 }
 
 func (r *rf95) closeSPI() {
-	rpio.SpiEnd(rpio.Spi0)
-	rpio.Close()
+	// rpio.SpiEnd(rpio.Spi0)
+	// rpio.Close()
+	r.port.Close()
 }
 
 // write one byte of data to register addr
 func (r *rf95) spiWrite(reg uint8, data uint8) {
-	rpio.SpiTransmit(reg|spiWrite_MASK, data)
+	txBuf := []byte{reg | spiWrite_MASK, data}
+	//rpio.SpiTransmit(reg|spiWrite_MASK, data)
+	r.conn.Tx(txBuf, nil)
 }
 
 // read one byte of data from register addr
 func (r *rf95) spiRead(reg uint8) uint8 {
-	buf := []byte{reg, 0}
-	rpio.SpiExchange(buf)
-	return buf[0]
+	txBuf := []byte{reg, 0}
+	rxBuf := make([]byte, 2)
+	//rpio.SpiExchange(buf)
+	r.conn.Tx(txBuf, rxBuf)
+	return rxBuf[0]
 }
 
 // write a slice (array) of data to register addr
@@ -277,9 +313,10 @@ func (r *rf95) spiWriteBuf(reg uint8, data []uint8) {
 	if len(data) > MAX_MESSAGE_LEN {
 		return
 	}
-	buf := []byte{reg | spiWrite_MASK}
-	buf = append(buf, data...)
-	rpio.SpiTransmit(buf...)
+	txBuf := []byte{reg | spiWrite_MASK}
+	txBuf = append(txBuf, data...)
+	//rpio.SpiTransmit(buf...)
+	r.conn.Tx(txBuf, nil)
 }
 
 // read a slice (array) of data from register addr
@@ -287,13 +324,15 @@ func (r *rf95) spiReadBuf(reg uint8, len int) []uint8 {
 	if len > MAX_MESSAGE_LEN-1 {
 		return nil
 	}
-	buf := make([]byte, len+1)
-	buf[0] = reg
+	txBuf := make([]byte, len+1)
+	rxBuf := make([]byte, len+1)
+	txBuf[0] = reg
 	for i := 1; i < len; i++ {
-		buf[i] = reg + uint8(i)
+		txBuf[i] = reg + uint8(i)
 	}
-	rpio.SpiExchange(buf)
-	return buf
+	//rpio.SpiExchange(buf)
+	r.conn.Tx(txBuf, rxBuf)
+	return rxBuf
 }
 
 func (r *rf95) SetModemConfig(mode []uint8) {
@@ -518,7 +557,7 @@ func (r *rf95) ClearRxBuf() {
 	r.bufLen = 0
 }
 
-func New(ch uint8, ip uint8, useI bool) (RF95, error) {
+func New(ch uint8, cs uint8, ip uint8, useI bool) (RF95, error) {
 	rf := rf95{
 		mode:         RADIO_MODE_INITIALISING,
 		buf:          make([]uint8, 256),
@@ -529,23 +568,43 @@ func New(ch uint8, ip uint8, useI bool) (RF95, error) {
 		txGood:       0,
 		rxBufValid:   false,
 		channel:      ch,
+		csel:         cs,
 		intPinNumber: ip,
 		useInt:       useI,
 		cad:          0,
 	}
 
 	// try to open spi and configure radio
-	err := rpio.Open()
-	if err != nil {
+	// err := rpio.Open()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// err = rpio.SpiBegin(rpio.Spi0)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// rpio.SpiChipSelect(rf.channel) // Select CS
+	if _, err := host.Init(); err != nil {
 		return nil, err
 	}
 
-	err = rpio.SpiBegin(rpio.Spi0)
+	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", rf.channel, rf.csel)
+
+	// open port
+	var err error
+	rf.port, err = spireg.Open(spiDev)
 	if err != nil {
 		return nil, err
 	}
+	defer rf.port.Close()
 
-	rpio.SpiChipSelect(rf.channel) // Select CS
+	// try to create a connection with parameters
+	rf.conn, err = rf.port.Connect(physic.MegaHertz, spi.Mode0, 8)
+	if err != nil {
+		return nil, err
+	}
 
 	// set LoRa mode
 	rf.spiWrite(REG_01_OP_MODE, MODE_SLEEP|LONG_RANGE_MODE)
@@ -565,11 +624,11 @@ func New(ch uint8, ip uint8, useI bool) (RF95, error) {
 
 	// setup gpio
 	if rf.useInt {
-		rf.intPin = rpio.Pin(rf.intPinNumber)
-		rf.intPin.Input()
+		rf.intPin = gpioreg.ByName(fmt.Sprintf("%d", rf.intPinNumber))
+		rf.intPin.In(gpio.PullNoChange, gpio.BothEdges)
+		//rf.intPin = rpio.Pin(rf.intPinNumber)
+		//rf.intPin.Input()
 	}
 
-	rpio.SpiEnd(rpio.Spi0)
-	rpio.Close()
 	return &rf, nil
 }
