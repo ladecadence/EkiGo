@@ -83,7 +83,7 @@ type config struct {
 }
 
 func GetConfig(filename string) (Config, error) {
-	conf := config{}
+	var conf config
 
 	_, err := toml.DecodeFile(filename, &conf)
 	if err != nil {
