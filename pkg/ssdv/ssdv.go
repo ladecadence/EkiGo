@@ -26,7 +26,7 @@ func New(img string, path string, name string, id string, count uint8) SSDV {
 		id:         id,
 		count:      count,
 		fileName:   img,
-		binaryName: name + path + ".bin",
+		binaryName: path + name + ".bin",
 	}
 
 	return ss
