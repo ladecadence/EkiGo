@@ -38,8 +38,8 @@ type ms5607 struct {
 	conn conn.Conn
 	addr uint16
 	prom [7]uint16
-	temp int64
-	p    int64
+	temp float64
+	p    float64
 }
 
 func New(bus uint8, addr uint16) (MS5607, error) {
@@ -131,6 +131,9 @@ func (m *ms5607) ReadADC(cmd uint8) (int64, error) {
 }
 
 func (m *ms5607) Update() error {
+
+	var dt, off, sens float64
+
 	d2, err := m.ReadADC(MS5607_CMD_ADC_D2 + MS5607_CMD_ADC_4096)
 	d1, err := m.ReadADC(MS5607_CMD_ADC_D1 + MS5607_CMD_ADC_4096)
 	if err != nil {
@@ -138,16 +141,16 @@ func (m *ms5607) Update() error {
 	}
 	// calculate 1st order pressure and temperature
 	// (MS5607 1st order algorithm)
-	dt := d2 - int64(m.prom[5])*(1<<8)
-	off := int64(m.prom[2])*(1<<17) + dt*int64(m.prom[4])/(1<<6)
-	sens := int64(m.prom[1])*(1<<16) + dt*int64(m.prom[3])/(1<<7)
+	dt = float64(d2) - float64(m.prom[5])*(1<<8)
+	off = float64(m.prom[2])*(1<<17) + dt*float64(m.prom[4])/(1<<6)
+	sens = float64(m.prom[1])*(1<<16) + dt*float64(m.prom[3])/(1<<7)
 
-	m.temp = 2000 + (dt*int64(m.prom[6]))/(1<<23)
-	m.p = ((d1*sens)/(1<<21) - off) / (1 << 15)
+	m.temp = 2000 + (dt*float64(m.prom[6]))/(1<<23)
+	m.p = ((float64(d1)*sens)/(1<<21) - off) / (1 << 15)
 
-	t2 := int64(0)
-	off2 := int64(0)
-	sens2 := int64(0)
+	t2 := float64(0)
+	off2 := float64(0)
+	sens2 := float64(0)
 
 	// perform higher order corrections
 	if m.temp < 2000 {
@@ -164,15 +167,15 @@ func (m *ms5607) Update() error {
 	off -= off2
 	sens -= sens2
 
-	m.p = ((d1 * sens) / ((1 << 21) - off)) / (2 << 15)
+	m.p = ((float64(d1) * sens) / ((1 << 21) - off)) / (2 << 15)
 
 	return nil
 }
 
 func (m *ms5607) GetTemp() float64 {
-	return float64(m.temp) / 100.0
+	return m.temp / 100.0
 }
 
 func (m *ms5607) GetPres() float64 {
-	return float64(m.p)
+	return m.p
 }
