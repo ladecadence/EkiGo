@@ -10,9 +10,10 @@ func TestRF95(t *testing.T) {
 		t.Errorf("Problem starting RF95: %v", err)
 	}
 
-	err = rf.SetFrequency(868.5)
-	if err != nil {
-		t.Errorf("Problem setting frequency: %v", err)
+	if rf != nil {
+		err = rf.SetFrequency(868.5)
+		if err != nil {
+			t.Errorf("Problem setting frequency: %v", err)
+		}
 	}
-
 }
