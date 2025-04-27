@@ -220,7 +220,7 @@ type RF95 interface {
 	SetModemConfig([]uint8)
 	SetModemConfigCustom(uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint8)
 	SetPreambleLength(uint16)
-	SetFrequency(float64)
+	SetFrequency(float64) error
 	SetModeSleep()
 	SetTxPower(uint8)
 	Send([]uint8) bool
@@ -293,36 +293,38 @@ func (r *rf95) closeSPI() {
 }
 
 // write one byte of data to register addr
-func (r *rf95) spiWrite(reg uint8, data uint8) {
+func (r *rf95) spiWrite(reg uint8, data uint8) error {
 	txBuf := []byte{reg | spiWrite_MASK, data}
 	//rpio.SpiTransmit(reg|spiWrite_MASK, data)
-	r.conn.Tx(txBuf, nil)
+	err := r.conn.Tx(txBuf, nil)
+	return err
 }
 
 // read one byte of data from register addr
-func (r *rf95) spiRead(reg uint8) uint8 {
+func (r *rf95) spiRead(reg uint8) (uint8, error) {
 	txBuf := []byte{reg, 0}
 	rxBuf := make([]byte, 2)
 	//rpio.SpiExchange(buf)
-	r.conn.Tx(txBuf, rxBuf)
-	return rxBuf[0]
+	err := r.conn.Tx(txBuf, rxBuf)
+	return rxBuf[0], err
 }
 
 // write a slice (array) of data to register addr
-func (r *rf95) spiWriteBuf(reg uint8, data []uint8) {
+func (r *rf95) spiWriteBuf(reg uint8, data []uint8) error {
 	if len(data) > MAX_MESSAGE_LEN {
-		return
+		return errors.New("Too much data to send")
 	}
 	txBuf := []byte{reg | spiWrite_MASK}
 	txBuf = append(txBuf, data...)
 	//rpio.SpiTransmit(buf...)
-	r.conn.Tx(txBuf, nil)
+	err := r.conn.Tx(txBuf, nil)
+	return err
 }
 
 // read a slice (array) of data from register addr
-func (r *rf95) spiReadBuf(reg uint8, len int) []uint8 {
+func (r *rf95) spiReadBuf(reg uint8, len int) ([]uint8, error) {
 	if len > MAX_MESSAGE_LEN-1 {
-		return nil
+		return nil, errors.New("Too much data to read")
 	}
 	txBuf := make([]byte, len+1)
 	rxBuf := make([]byte, len+1)
@@ -331,8 +333,8 @@ func (r *rf95) spiReadBuf(reg uint8, len int) []uint8 {
 		txBuf[i] = reg + uint8(i)
 	}
 	//rpio.SpiExchange(buf)
-	r.conn.Tx(txBuf, rxBuf)
-	return rxBuf
+	err := r.conn.Tx(txBuf, rxBuf)
+	return rxBuf, err
 }
 
 func (r *rf95) SetModemConfig(mode []uint8) {
@@ -376,14 +378,15 @@ func (r *rf95) SetPreambleLength(len uint16) {
 	r.closeSPI()
 }
 
-func (r *rf95) SetFrequency(freq float64) {
+func (r *rf95) SetFrequency(freq float64) error {
 	r.openSPI()
 	freq_value := uint32((freq * 1000000.0) / FSTEP)
 
-	r.spiWrite(REG_06_FRF_MSB, uint8((freq_value>>16)&0xff))
-	r.spiWrite(REG_07_FRF_MID, uint8((freq_value>>8)&0xff))
-	r.spiWrite(REG_08_FRF_LSB, uint8((freq_value)&0xff))
+	err := r.spiWrite(REG_06_FRF_MSB, uint8((freq_value>>16)&0xff))
+	err = r.spiWrite(REG_07_FRF_MID, uint8((freq_value>>8)&0xff))
+	err = r.spiWrite(REG_08_FRF_LSB, uint8((freq_value)&0xff))
 	r.closeSPI()
+	return err
 }
 
 func (r *rf95) setModeIdle() {
@@ -482,7 +485,7 @@ func (r *rf95) waitPacketSent() bool {
 		}
 
 		r.openSPI()
-		for (r.spiRead(REG_12_IRQ_FLAGS) & TX_DONE) == 0 {
+		for d, _ := r.spiRead(REG_12_IRQ_FLAGS); d&TX_DONE == 0; {
 			//thread::sleep(time::Duration::from_millis(10));
 		}
 
@@ -508,16 +511,16 @@ func (r *rf95) Available() (bool, error) {
 	if !r.useInt {
 		r.openSPI()
 		// read the interrupt register
-		irqFlags := r.spiRead(REG_12_IRQ_FLAGS)
+		irqFlags, _ := r.spiRead(REG_12_IRQ_FLAGS)
 
 		if (r.mode == RADIO_MODE_RX) && (irqFlags&RX_DONE != 0) {
 			// Have received a packet
-			length := r.spiRead(REG_13_RX_NB_BYTES)
+			length, _ := r.spiRead(REG_13_RX_NB_BYTES)
 
 			// Reset the fifo read ptr to the beginning of the packet
-			ptr := r.spiRead(REG_10_FIFO_RX_CURRENT_ADDR)
+			ptr, _ := r.spiRead(REG_10_FIFO_RX_CURRENT_ADDR)
 			r.spiWrite(REG_0D_FIFO_ADDR_PTR, ptr)
-			r.buf = r.spiReadBuf(REG_00_FIFO, int(length))
+			r.buf, _ = r.spiReadBuf(REG_00_FIFO, int(length))
 			r.bufLen = length
 			// clear IRQ flags
 			r.spiWrite(REG_12_IRQ_FLAGS, 0xff)
@@ -525,7 +528,8 @@ func (r *rf95) Available() (bool, error) {
 			// Remember the RSSI of this packet
 			// this is according to the doc, but is it really correct?
 			// weakest receiveable signals are reported RSSI at about -66
-			r.lastRssi = int16(r.spiRead(REG_1A_PKT_RSSI_VALUE)) - 137
+			d, _ := r.spiRead(REG_1A_PKT_RSSI_VALUE)
+			r.lastRssi = int16(d) - 137
 			r.closeSPI()
 			// We have received a message.
 			// validateRxBuf();  TO BE IMPLEMENTED
@@ -609,7 +613,7 @@ func New(ch uint8, cs uint8, ip uint8, useI bool) (RF95, error) {
 	// set LoRa mode
 	rf.spiWrite(REG_01_OP_MODE, MODE_SLEEP|LONG_RANGE_MODE)
 	// check if we are set
-	if rf.spiRead(REG_01_OP_MODE) != (MODE_SLEEP | LONG_RANGE_MODE) {
+	if d, _ := rf.spiRead(REG_01_OP_MODE); d != (MODE_SLEEP | LONG_RANGE_MODE) {
 		return nil, errors.New("Lora not configured")
 	}
 	// set up FIFO
