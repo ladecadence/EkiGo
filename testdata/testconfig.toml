@@ -9,15 +9,17 @@ batt_enable_pin = 24
 led_pin = 17
 pwr_pin = 26
 
-gps_serial_port = '/dev/ttyAMA0'
+gps_serial_port = '/dev/serial0'
 gps_speed = 9600
 
+lora_spi_channel = 0
 lora_cs = 0
 lora_int_pin = 25
-lora_freq = 868500000
+lora_freq = 868.5
 lora_low_pwr = 5
 lora_high_pwr = 20
 
+adc_channel = 0
 adc_cs = 1
 adc_vbatt = 0
 adc_v_divider = 3.2
