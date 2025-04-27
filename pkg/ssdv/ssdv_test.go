@@ -18,6 +18,6 @@ func TestSSDV(t *testing.T) {
 		t.Errorf("Error getting SSDV packet: %v", err)
 	}
 	if packet != nil {
-		fmt.Printf("% x", packet)
+		fmt.Printf("% x\n", packet)
 	}
 }
