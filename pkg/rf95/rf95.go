@@ -3,6 +3,7 @@ package rf95
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
@@ -490,7 +491,10 @@ func (r *rf95) WaitPacketSent() bool {
 		}
 
 		r.openSPI()
-		for d, _ := r.spiRead(REG_12_IRQ_FLAGS); d&TX_DONE == 0; {
+		d, _ := r.spiRead(REG_12_IRQ_FLAGS)
+		for d&TX_DONE == 0 {
+			d, _ = r.spiRead(REG_12_IRQ_FLAGS)
+			time.Sleep(time.Millisecond * 10)
 			//thread::sleep(time::Duration::from_millis(10));
 		}
 
