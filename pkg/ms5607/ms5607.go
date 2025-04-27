@@ -65,6 +65,11 @@ func New(bus uint8, addr uint16) (MS5607, error) {
 	// connection
 	ms.conn = &ms.dev
 
+	err = ms.ReadProm()
+	if err != nil {
+		return nil, err
+	}
+
 	return &ms, nil
 }
 
@@ -88,6 +93,7 @@ func (m *ms5607) ReadProm() error {
 		}
 		m.prom[i] = (uint16(rxBuf[0])) << 8
 		m.prom[i] += uint16(rxBuf[1])
+		fmt.Printf("PROM %d: %d\n", i, m.prom[i])
 	}
 	return nil
 }
