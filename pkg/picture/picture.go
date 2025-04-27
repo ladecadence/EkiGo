@@ -46,11 +46,16 @@ func (p *Picture) UpdateName() {
 		".jpg"
 }
 
-func (p *Picture) Capture() error {
+func (p *Picture) Capture(rotate bool) error {
 	p.UpdateName()
+	var rot = ""
+	if rotate == true {
+		rot = "-r 180"
+	}
 	cmd := exec.Command(raspistill,
 		"-t",
 		"1000",
+		rot,
 		"-o",
 		p.Filename,
 	)

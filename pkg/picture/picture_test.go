@@ -18,7 +18,7 @@ func TestPictureData(t *testing.T) {
 func TestPictureTake(t *testing.T) {
 	pic := New(0, "test", "/home/pi/eki2/image/")
 	pic.UpdateName()
-	err := pic.Capture()
+	err := pic.Capture(true)
 	if err != nil {
 		t.Errorf("Problem capturing image: %v", err)
 	}
