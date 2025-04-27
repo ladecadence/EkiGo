@@ -20,8 +20,9 @@ type Telemetry interface {
 		baro float64,
 		tin float64,
 		tout float64,
-		hpwr int)
+		hpwr uint8)
 	AprsString() string
+	CsvString() string
 }
 
 type telemetry struct {
@@ -44,7 +45,7 @@ type telemetry struct {
 	time     string
 	sep      string
 	dateTime time.Time
-	hpwr     int
+	hpwr     uint8
 }
 
 func New(i string, m string, s string) Telemetry {
@@ -87,7 +88,7 @@ func (t *telemetry) Update(
 	baro float64,
 	tin float64,
 	tout float64,
-	hpwr int) {
+	hpwr uint8) {
 
 	// save old altitude for ascension rate
 	oldAlt := t.alt
@@ -177,6 +178,29 @@ func (t *telemetry) AprsString() string {
 	aprs += "\n"
 
 	return aprs
+}
+
+func (t *telemetry) CsvString() string {
+	// gen CSV string
+	csv := ""
+	csv += t.date + ","
+	csv += t.time + ","
+	csv += fmt.Sprintf("%f", decLat(t.lat)) + ","
+	csv += t.ns + ","
+	csv += fmt.Sprintf("%f", decLon(t.lon)) + ","
+	csv += t.ew + ","
+	csv += fmt.Sprintf("%.1f", t.alt) + ","
+	csv += fmt.Sprintf("%.2f", t.vbat) + ","
+	csv += fmt.Sprintf("%.1f", t.tin) + ","
+	csv += fmt.Sprintf("%.1f", t.tout) + ","
+	csv += fmt.Sprintf("%.1f", t.baro) + ","
+	csv += fmt.Sprintf("%.1f", t.hdg) + ","
+	csv += fmt.Sprintf("%.1f", t.spd) + ","
+	csv += fmt.Sprintf("%d", t.sats) + ","
+	csv += fmt.Sprintf("%.1f", t.arate) + ","
+	csv += t.date
+
+	return csv
 }
 
 func decLat(lat float64) float64 {
