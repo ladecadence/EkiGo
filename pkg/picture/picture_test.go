@@ -29,7 +29,7 @@ func TestPictureTake(t *testing.T) {
 	if err != nil {
 		t.Errorf("Problem capturing small image: %v", err)
 	}
-	fmt.Printf("Picture shot: %s\n", pic.Filename)
+	fmt.Printf("Picture shot: %s\n", pic.Path+"ssdv.jpg")
 
 	err = pic.AddInfo(pic.Path+"ssdv.jpg", "ID", "USBID", "Test image, message", "Data: 1234567890")
 	if err != nil {
