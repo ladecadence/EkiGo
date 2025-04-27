@@ -118,7 +118,7 @@ func (p *Picture) AddInfo(file string, id string, subid string, msg string, data
 	ct.DrawString(fmt.Sprintf("%s %s", id, subid), 12, 22)
 
 	// font
-	if err := ct.LoadFontFace("TerminusTTF-4.46.0.ttf", 16); err != nil {
+	if err := ct.LoadFontFace("assets/TerminusTTF-4.46.0.ttf", 16); err != nil {
 		return err
 	}
 	ct.SetRGB(0, 0, 0)
