@@ -138,12 +138,12 @@ func (m *ms5607) Update() error {
 	}
 	// calculate 1st order pressure and temperature
 	// (MS5607 1st order algorithm)
-	dt := d2 - int64(m.prom[5])*Pow(2, 8)
-	off := int64(m.prom[2]) * (Pow(2, 17) + dt*int64(m.prom[4])/Pow(2, 6))
-	sens := int64(m.prom[1]) * (Pow(2, 16) + dt*int64(m.prom[3])/Pow(2, 7))
+	dt := d2 - int64(m.prom[5])*(1<<8)
+	off := int64(m.prom[2])*(1<<17) + dt*int64(m.prom[4])/(1<<6)
+	sens := int64(m.prom[1])*(1<<16) + dt*int64(m.prom[3])/(1<<7)
 
-	m.temp = 2000 + (dt*int64(m.prom[6]))/Pow(2, 23)
-	m.p = ((d1*sens)/(Pow(2, 21)) - off) / (Pow(2, 15))
+	m.temp = 2000 + (dt*int64(m.prom[6]))/(1<<23)
+	m.p = ((d1*sens)/(1<<21) - off) / (1 << 15)
 
 	t2 := int64(0)
 	off2 := int64(0)
@@ -151,8 +151,8 @@ func (m *ms5607) Update() error {
 
 	// perform higher order corrections
 	if m.temp < 2000 {
-		t2 = dt * dt / Pow(2, 31)
-		off2 = 61 * (m.temp - 2000) * (m.temp - 2000) / Pow(2, 4)
+		t2 = dt * dt / (1 << 31)
+		off2 = 61 * (m.temp - 2000) * (m.temp - 2000) / (1 << 4)
 		sens2 = 2 * (m.temp - 2000) * (m.temp - 2000)
 
 		if m.temp < -1500 {
@@ -164,7 +164,7 @@ func (m *ms5607) Update() error {
 	off -= off2
 	sens -= sens2
 
-	m.p = ((d1 * sens) / (Pow(2, 21) - off)) / Pow(2, 15)
+	m.p = ((d1 * sens) / ((1 << 21) - off)) / (2 << 15)
 
 	return nil
 }
@@ -175,21 +175,4 @@ func (m *ms5607) GetTemp() float64 {
 
 func (m *ms5607) GetPres() float64 {
 	return float64(m.p)
-}
-
-func Pow(base, exp int64) int64 {
-	var result int64
-	result = 1
-	for {
-		if exp&1 == 1 {
-			result *= base
-		}
-		exp >>= 1
-		if exp == 0 {
-			break
-		}
-		base *= base
-	}
-
-	return result
 }
