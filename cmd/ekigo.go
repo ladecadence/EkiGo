@@ -57,6 +57,7 @@ func main() {
 
 			// send telemetry
 			mission.UpdateTelemetry(conf)
+			fmt.Println("Updated telemetry")
 			mission.SendTelemetry()
 
 			// write datalog
