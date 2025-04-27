@@ -174,7 +174,7 @@ func (m *ms5607) GetTemp() float64 {
 }
 
 func (m *ms5607) GetPres() float64 {
-	return float64(m.p) / 100.0
+	return float64(m.p)
 }
 
 func Pow(base, exp int64) int64 {
