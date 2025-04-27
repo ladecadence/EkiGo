@@ -50,7 +50,7 @@ func New(conf config.Config) (Mission, error) {
 	if err != nil {
 		return nil, err
 	}
-	mission.log.Log(logging.LogInfo, fmt.Sprintf("Mission %s starting...\n", conf.ID()))
+	mission.log.Log(logging.LogInfo, fmt.Sprintf("Mission %s starting...", conf.ID()))
 
 	// datalog
 	mission.dataLog, err = logging.New(conf.PathMainDir() + "datalog_")
