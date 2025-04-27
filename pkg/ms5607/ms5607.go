@@ -142,8 +142,8 @@ func (m *ms5607) Update() error {
 	// calculate 1st order pressure and temperature
 	// (MS5607 1st order algorithm)
 	dt = float64(d2) - float64(m.prom[5])*(1<<8)
-	off = float64(m.prom[2])*(1<<17) + dt*float64(m.prom[4])/(1<<6)
-	sens = float64(m.prom[1])*(1<<16) + dt*float64(m.prom[3])/(1<<7)
+	off = float64(m.prom[2])*(1<<17) + (dt*float64(m.prom[4]))/(1<<6)
+	sens = float64(m.prom[1])*(1<<16) + (dt*float64(m.prom[3]))/(1<<7)
 
 	m.temp = 2000 + (dt*float64(m.prom[6]))/(1<<23)
 	m.p = ((float64(d1)*sens)/(1<<21) - off) / (1 << 15)
@@ -167,7 +167,7 @@ func (m *ms5607) Update() error {
 	off -= off2
 	sens -= sens2
 
-	m.p = ((float64(d1) * sens) / ((1 << 21) - off)) / (2 << 15)
+	m.p = ((float64(d1)*sens)/(1<<21) - off) / (2 << 15)
 
 	return nil
 }
