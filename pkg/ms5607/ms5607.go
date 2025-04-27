@@ -93,7 +93,6 @@ func (m *ms5607) ReadProm() error {
 		}
 		m.prom[i] = (uint16(rxBuf[0])) << 8
 		m.prom[i] += uint16(rxBuf[1])
-		fmt.Printf("PROM %d: %d\n", i, m.prom[i])
 	}
 	return nil
 }
@@ -144,7 +143,7 @@ func (m *ms5607) Update() error {
 	sens := int64(m.prom[1]) * (Pow(2, 16) + dt*int64(m.prom[3])/Pow(2, 7))
 
 	m.temp = 2000 + (dt*int64(m.prom[6]))/Pow(2, 23)
-	m.p = ((d1*sens)/Pow(2, 21) - off) / (Pow(2, 15))
+	m.p = ((d1*sens)/(Pow(2, 21)) - off) / (Pow(2, 15))
 
 	t2 := int64(0)
 	off2 := int64(0)
