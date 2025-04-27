@@ -19,8 +19,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%v\n", conf.ID())
-
 	// now test that configuration is not the default one
 	if conf.ID() == "" || conf.SubID() == "" || conf.Msg() == "" ||
 		conf.Separator() == "" || conf.PathMainDir() == "" ||
