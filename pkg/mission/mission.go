@@ -22,6 +22,7 @@ type Mission interface {
 	DataLog() logging.Logging
 	UpdateTelemetry(config.Config) error
 	SendTelemetry() error
+	SendSSDV(config.Config) error
 	Telemetry() telemetry.Telemetry
 	SetTimeGPS(int, int, int) error
 }
@@ -217,5 +218,42 @@ func (m *mission) SendTelemetry() error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (m *mission) SendSSDV(conf config.Config) error {
+	err := m.pic.Capture(true)
+	if err != nil {
+		m.log.Log(logging.LogError, fmt.Sprintf("Error taking picture: %v", err))
+		return err
+	}
+	m.log.Log(logging.LogInfo, fmt.Sprintf("Picture shot: %s", m.pic.Filename))
+	// Take SSDV picture
+	err = m.pic.CaptureSmall(conf.SsdvName(), conf.SsdvSize(), true)
+	if err != nil {
+		m.log.Log(logging.LogError, fmt.Sprintf("Error taking SSDV picture: %v", err))
+		return err
+	}
+	m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV picture shot: %s", conf.SsdvName()))
+
+	// Encode SSDV picture
+	err = m.pic.AddInfo(conf.PathMainDir()+conf.PathImgDir()+conf.SsdvName(),
+		conf.ID(),
+		conf.SubID(),
+		conf.Msg(),
+		fmt.Sprintf("%f%s, %f%s, %.1fm",
+			gps.NmeaToDec(m.gps.Lat()),
+			m.gps.NS(),
+			gps.NmeaToDec(m.gps.Lon()),
+			m.gps.EW(),
+			m.gps.Alt(),
+		),
+	)
+	if err != nil {
+		m.log.Log(logging.LogError, fmt.Sprintf("Error adding info to SSDV picture: %v", err))
+		return err
+	}
+	m.log.Log(logging.LogInfo, "SSDV info added")
+
 	return nil
 }
