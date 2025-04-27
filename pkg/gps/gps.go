@@ -192,8 +192,9 @@ func (g *gps) Update() error {
 			return err
 		}
 		if g.sats < minSats {
-			// not enough sats, but perhaps we can parse time
+			// not enough sats, but perhaps we can parse time and date
 			g.time = ggaData[fieldTime]
+			g.date = rmcData[fieldDate]
 			return errors.New("Not enough sats")
 		}
 		// ok parse elements if possible, if not provide default values
@@ -251,7 +252,7 @@ func (g *gps) Time() (int, int, int, error) {
 		minute, err := strconv.Atoi(g.time[2:4])
 		second, err := strconv.Atoi(g.time[4:])
 		if err != nil {
-			return 0, 0, 0, errors.New("GPS time parse error")
+			return 0, 0, 0, errors.New("GPS time parse fields error")
 		}
 		return hour, minute, second, nil
 	} else {
@@ -265,7 +266,7 @@ func (g *gps) Date() (int, int, int, error) {
 		month, err := strconv.Atoi(g.date[2:4])
 		year, err := strconv.Atoi(g.date[4:])
 		if err != nil {
-			return 0, 0, 0, errors.New("GPS date parse error")
+			return 0, 0, 0, errors.New("GPS date parse fields error")
 		}
 		return day, month, year + 2000, nil
 	} else {
