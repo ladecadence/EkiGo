@@ -50,7 +50,7 @@ func (p *Picture) Capture(rotate bool) error {
 	p.UpdateName()
 	var rot = ""
 	if rotate == true {
-		rot = "-r 180"
+		rot = "--rotation 180"
 	}
 	cmd := exec.Command(raspistill,
 		"-t",
@@ -59,7 +59,6 @@ func (p *Picture) Capture(rotate bool) error {
 		"-o",
 		p.Filename,
 	)
-	fmt.Println(cmd.String())
 	err := cmd.Run()
 	if err != nil {
 		return err
