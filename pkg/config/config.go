@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/BurntSushi/toml"
 )
 
@@ -41,45 +39,45 @@ type Config interface {
 }
 
 type config struct {
-	id           string `toml:"id"`
-	subId        string `toml:"subid"`
-	msg          string `toml:"msg"`
-	separator    string `toml:"separator"`
-	packetRepeat int    `toml:"packet_repeat"`
-	packetDelay  int    `toml:"packet_delay"`
+	Id_           string `toml:"id"`
+	SubId_        string `toml:"subid"`
+	Msg_          string `toml:"msg"`
+	Separator_    string `toml:"separator"`
+	PacketRepeat_ int    `toml:"packet_repeat"`
+	PacketDelay_  int    `toml:"packet_delay"`
 
-	battEnablePin uint8 `toml:"batt_en_pin"`
-	ledPin        uint8 `toml:"led_pin"`
-	pwrPin        uint8 `toml:"pwr_pin"`
+	BattEnablePin_ uint8 `toml:"batt_en_pin"`
+	LedPin_        uint8 `toml:"led_pin"`
+	PwrPin_        uint8 `toml:"pwr_pin"`
 
-	gpsPort  string `toml:"gps_port"`
-	gpsSpeed int    `toml:"gps_speed"`
+	GpsPort_  string `toml:"gps_port"`
+	GpsSpeed_ int    `toml:"gps_speed"`
 
-	loraSPIChannel uint8   `toml:"lora_spi_channel"`
-	loraCSPin      uint8   `toml:"lora_cs_pin"`
-	loraIntPin     uint8   `toml:"lora_int_pin"`
-	loraFreq       float64 `toml:"lora_freq"`
-	loraLowPwr     uint8   `toml:"lora_low_pwr"`
-	loraHighPwr    uint8   `toml:"lora_high_pwr"`
+	LoraSPIChannel_ uint8   `toml:"lora_spi_channel"`
+	LoraCSPin_      uint8   `toml:"lora_cs_pin"`
+	LoraIntPin_     uint8   `toml:"lora_int_pin"`
+	LoraFreq_       float64 `toml:"lora_freq"`
+	LoraLowPwr_     uint8   `toml:"lora_low_pwr"`
+	LoraHighPwr_    uint8   `toml:"lora_high_pwr"`
 
-	aDCChan     int     `toml:"adc_channel"`
-	aDCCsPin    uint8   `toml:"adc_cs_pin"`
-	aDCVBatt    int     `toml:"adc_v_batt"`
-	aDCVDivider float64 `toml:"adc_v_divider"`
-	aDCVMult    float64 `toml:"adc_v_multiplier"`
+	ADCChan_     int     `toml:"adc_channel"`
+	ADCCsPin_    uint8   `toml:"adc_cs_pin"`
+	ADCVBatt_    int     `toml:"adc_v_batt"`
+	ADCVDivider_ float64 `toml:"adc_v_divider"`
+	ADCVMult_    float64 `toml:"adc_v_multiplier"`
 
-	tempInternalAddr string `toml:"temp_int_addr"`
-	tempExternalAddr string `toml:"temp_ext_addr"`
+	TempInternalAddr_ string `toml:"temp_int_addr"`
+	TempExternalAddr_ string `toml:"temp_ext_addr"`
 
-	baroI2CBus  uint8  `toml:"baro_i2c_bus"`
-	baroI2CAddr uint16 `toml:"baro_i2c_addr"`
+	BaroI2CBus_  uint8  `toml:"baro_i2c_bus"`
+	BaroI2CAddr_ uint16 `toml:"baro_i2c_addr"`
 
-	pathMainDir   string `toml:"path_main_dir"`
-	pathImgDir    string `toml:"path_img_dir"`
-	pathLogPrefix string `toml:"path_log_prefix"`
+	PathMainDir_   string `toml:"path_main_dir"`
+	PathImgDir_    string `toml:"path_img_dir"`
+	PathLogPrefix_ string `toml:"path_log_prefix"`
 
-	ssdvSize string `toml:"ssdv_size"`
-	ssdvName string `toml:"ssdv_name"`
+	SsdvSize_ string `toml:"ssdv_size"`
+	SsdvName_ string `toml:"ssdv_name"`
 }
 
 func GetConfig(filename string) (Config, error) {
@@ -89,40 +87,38 @@ func GetConfig(filename string) (Config, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("Parsed: %v", conf)
 	return &conf, nil
 }
 
 // getters
-func (c *config) ID() string               { return c.id }
-func (c *config) SubID() string            { return c.subId }
-func (c *config) Msg() string              { return c.msg }
-func (c *config) Separator() string        { return c.separator }
-func (c *config) PacketRepeat() int        { return c.packetRepeat }
-func (c *config) PacketDelay() int         { return c.packetDelay }
-func (c *config) BattEnablePin() uint8     { return c.battEnablePin }
-func (c *config) LedPin() uint8            { return c.ledPin }
-func (c *config) PwrPin() uint8            { return c.pwrPin }
-func (c *config) GpsPort() string          { return c.gpsPort }
-func (c *config) GpsSpeed() int            { return c.gpsSpeed }
-func (c *config) LoraSPIChannel() uint8    { return c.loraSPIChannel }
-func (c *config) LoraCSPin() uint8         { return c.loraCSPin }
-func (c *config) LoraIntPin() uint8        { return c.loraIntPin }
-func (c *config) LoraFreq() float64        { return c.loraFreq }
-func (c *config) LoraLowPwr() uint8        { return c.loraLowPwr }
-func (c *config) LoraHighPwr() uint8       { return c.loraHighPwr }
-func (c *config) ADCChan() int             { return c.aDCChan }
-func (c *config) ADCCsPin() uint8          { return c.aDCCsPin }
-func (c *config) ADCVBatt() int            { return c.aDCVBatt }
-func (c *config) ADCVDivider() float64     { return c.aDCVDivider }
-func (c *config) ADCVMult() float64        { return c.aDCVMult }
-func (c *config) TempInternalAddr() string { return c.tempInternalAddr }
-func (c *config) TempExternalAddr() string { return c.tempExternalAddr }
-func (c *config) BaroI2CBus() uint8        { return c.baroI2CBus }
-func (c *config) BaroI2CAddr() uint16      { return c.baroI2CAddr }
-func (c *config) PathMainDir() string      { return c.pathMainDir }
-func (c *config) PathImgDir() string       { return c.pathImgDir }
-func (c *config) PathLogPrefix() string    { return c.pathLogPrefix }
-func (c *config) SsdvSize() string         { return c.ssdvSize }
-func (c *config) SsdvName() string         { return c.ssdvName }
+func (c *config) ID() string               { return c.Id_ }
+func (c *config) SubID() string            { return c.SubId_ }
+func (c *config) Msg() string              { return c.Msg_ }
+func (c *config) Separator() string        { return c.Separator_ }
+func (c *config) PacketRepeat() int        { return c.PacketRepeat_ }
+func (c *config) PacketDelay() int         { return c.PacketDelay_ }
+func (c *config) BattEnablePin() uint8     { return c.BattEnablePin_ }
+func (c *config) LedPin() uint8            { return c.LedPin_ }
+func (c *config) PwrPin() uint8            { return c.PwrPin_ }
+func (c *config) GpsPort() string          { return c.GpsPort_ }
+func (c *config) GpsSpeed() int            { return c.GpsSpeed_ }
+func (c *config) LoraSPIChannel() uint8    { return c.LoraSPIChannel_ }
+func (c *config) LoraCSPin() uint8         { return c.LoraCSPin_ }
+func (c *config) LoraIntPin() uint8        { return c.LoraIntPin_ }
+func (c *config) LoraFreq() float64        { return c.LoraFreq_ }
+func (c *config) LoraLowPwr() uint8        { return c.LoraLowPwr_ }
+func (c *config) LoraHighPwr() uint8       { return c.LoraHighPwr_ }
+func (c *config) ADCChan() int             { return c.ADCChan_ }
+func (c *config) ADCCsPin() uint8          { return c.ADCCsPin_ }
+func (c *config) ADCVBatt() int            { return c.ADCVBatt_ }
+func (c *config) ADCVDivider() float64     { return c.ADCVDivider_ }
+func (c *config) ADCVMult() float64        { return c.ADCVMult_ }
+func (c *config) TempInternalAddr() string { return c.TempInternalAddr_ }
+func (c *config) TempExternalAddr() string { return c.TempExternalAddr_ }
+func (c *config) BaroI2CBus() uint8        { return c.BaroI2CBus_ }
+func (c *config) BaroI2CAddr() uint16      { return c.BaroI2CAddr_ }
+func (c *config) PathMainDir() string      { return c.PathMainDir_ }
+func (c *config) PathImgDir() string       { return c.PathImgDir_ }
+func (c *config) PathLogPrefix() string    { return c.PathLogPrefix_ }
+func (c *config) SsdvSize() string         { return c.SsdvSize_ }
+func (c *config) SsdvName() string         { return c.SsdvName_ }
