@@ -69,7 +69,8 @@ func main() {
 		}
 
 		// send SSDV
-		// TODO
+		mission.SendSSDV(conf)
+		time.Sleep(time.Duration(conf.PacketDelay()) * time.Second)
 	}
 
 }
