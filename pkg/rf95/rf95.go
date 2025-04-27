@@ -310,7 +310,7 @@ func (r *rf95) spiRead(reg uint8) (uint8, error) {
 	//rpio.SpiExchange(buf)
 	err := r.conn.Tx(txBuf, rxBuf)
 	fmt.Printf("spiRead data: %v\n", rxBuf)
-	return rxBuf[0], err
+	return rxBuf[1], err
 }
 
 // write a slice (array) of data to register addr
