@@ -251,6 +251,7 @@ func (g *gps) Time() (int, int, int, error) {
 		hour, err := strconv.Atoi(g.time[0:2])
 		minute, err := strconv.Atoi(g.time[2:4])
 		second, err := strconv.Atoi(g.time[4:])
+		fmt.Printf("%d, %d, %d\n", hour, minute, second)
 		if err != nil {
 			return 0, 0, 0, errors.New("GPS time parse fields error")
 		}
