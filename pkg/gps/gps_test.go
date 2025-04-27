@@ -24,5 +24,11 @@ func TestGPS(t *testing.T) {
 		} else {
 			fmt.Printf("GPS time: %v %v %v\n", h, m, s)
 		}
+		d, mn, y, err := gps.Date()
+		if err != nil {
+			t.Errorf("Error reading GPS date: %v", err)
+		} else {
+			fmt.Printf("GPS date: %v %v %v\n", d, mn, y)
+		}
 	}
 }
