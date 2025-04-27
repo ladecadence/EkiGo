@@ -306,6 +306,7 @@ func (r *rf95) spiRead(reg uint8) (uint8, error) {
 	rxBuf := make([]byte, 2)
 	//rpio.SpiExchange(buf)
 	err := r.conn.Tx(txBuf, rxBuf)
+	fmt.Printf("spiRead data: %v\n", rxBuf)
 	return rxBuf[0], err
 }
 
