@@ -76,7 +76,7 @@ type config struct {
 
 	pathMainDir   string `toml:"path_main_dir"`
 	pathImgDir    string `toml:"path_img_dir"`
-	pathLogPrefix string `toml:"path_main_dir"`
+	pathLogPrefix string `toml:"path_log_prefix"`
 
 	ssdvSize string `toml:"ssdv_size"`
 	ssdvName string `toml:"ssdv_name"`
