@@ -190,6 +190,8 @@ func (m *mission) UpdateTelemetry(conf config.Config) error {
 		tout,
 		m.pwrSel)
 
+	fmt.Printf("%v\n", m.Telemetry())
+
 	return nil
 }
 
