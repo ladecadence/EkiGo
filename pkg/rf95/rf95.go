@@ -224,6 +224,7 @@ type RF95 interface {
 	SetModeSleep()
 	SetTxPower(uint8)
 	Send([]uint8) bool
+	WaitPacketSent() bool
 	Available() (bool, error)
 	ClearRxBuf()
 }
@@ -459,7 +460,7 @@ func (r *rf95) Send(data []uint8) bool {
 		return false
 	}
 
-	r.waitPacketSent()
+	r.WaitPacketSent()
 
 	r.setModeIdle()
 
@@ -477,7 +478,7 @@ func (r *rf95) Send(data []uint8) bool {
 	return true
 }
 
-func (r *rf95) waitPacketSent() bool {
+func (r *rf95) WaitPacketSent() bool {
 	if !r.useInt {
 		// If we are not currently in transmit mode,
 		// there is no packet to wait for
