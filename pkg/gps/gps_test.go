@@ -19,7 +19,7 @@ func TestGPS(t *testing.T) {
 			t.Errorf("Error updating GPS: %v", err)
 		}
 
-		fmt.Printf("%f %s, %f %s, alt: %f, sats: %d",
+		fmt.Printf("%f %s, %f %s, alt: %f, sats: %d\n",
 			NmeaToDec(gps.Lat()), gps.NS(), NmeaToDec(gps.Lon()), gps.EW(), gps.Alt(), gps.Sats(),
 		)
 
