@@ -198,7 +198,6 @@ func (t *telemetry) CsvString() string {
 	csv += fmt.Sprintf("%.1f", t.spd) + ","
 	csv += fmt.Sprintf("%d", t.sats) + ","
 	csv += fmt.Sprintf("%.1f", t.arate) + ","
-	csv += t.date
 
 	return csv
 }
