@@ -88,7 +88,7 @@ func (p *Picture) CaptureSmall(name string, res string, rotate bool) error {
 	cmd.Args = append(cmd.Args, "--height")
 	cmd.Args = append(cmd.Args, resolution[1])
 	cmd.Args = append(cmd.Args, "-o")
-	cmd.Args = append(cmd.Args, p.Filename)
+	cmd.Args = append(cmd.Args, p.Path+name)
 	err := cmd.Run()
 	if err != nil {
 		return err
