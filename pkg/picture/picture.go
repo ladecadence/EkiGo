@@ -13,7 +13,7 @@ import (
 
 // Constants
 const (
-	raspistill         = "raspistill"
+	raspistill         = "rpicam-still"
 	TEXT_BIG   float32 = 20.0
 	TEXT_SMALL float32 = 16.0
 )
@@ -48,7 +48,6 @@ func (p *Picture) UpdateName() {
 func (p *Picture) Capture() error {
 	p.UpdateName()
 	cmd := exec.Command(raspistill,
-		"-st",
 		"-t",
 		"1000",
 		"-o",
@@ -74,12 +73,11 @@ func (p *Picture) CaptureSmall(name string, res string) error {
 	resolution := strings.Split(res, "x")
 
 	cmd := exec.Command(raspistill,
-		"-st",
 		"-t",
 		"1000",
-		"-w",
+		"--width",
 		resolution[0],
-		"-h",
+		"--height",
 		resolution[1],
 		"-o",
 		p.Path+name,
