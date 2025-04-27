@@ -16,6 +16,9 @@ type Config struct {
 	LedPin        int `toml:"led_pin"`
 	PwrPin        int `toml:"pwr_pin"`
 
+	GpsPort  string `toml:"gps_port"`
+	GpsSpeed int    `toml:"gps_speed"`
+
 	LoraCSPin   int   `toml:"lora_cs_pin"`
 	LoraIntPin  int   `toml:"lora_int_pin"`
 	LoraFreq    int64 `toml:"lora_freq"`
