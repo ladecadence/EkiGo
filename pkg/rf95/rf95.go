@@ -295,8 +295,10 @@ func (r *rf95) closeSPI() {
 // write one byte of data to register addr
 func (r *rf95) spiWrite(reg uint8, data uint8) error {
 	txBuf := []byte{reg | spiWrite_MASK, data}
+	rxBuf := make([]byte, 2)
 	//rpio.SpiTransmit(reg|spiWrite_MASK, data)
-	err := r.conn.Tx(txBuf, nil)
+	err := r.conn.Tx(txBuf, rxBuf)
+	fmt.Printf("spiWrite data: %v\n", rxBuf)
 	return err
 }
 
