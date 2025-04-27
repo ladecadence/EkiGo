@@ -82,6 +82,12 @@ func New(conf config.Config) (Mission, error) {
 		return nil, err
 	}
 
+	// temperature sensors
+	mission.temp_internal = ds18b20.DS18B20{}
+	mission.temp_internal.Init(conf.TempInternalAddr())
+	mission.temp_external = ds18b20.DS18B20{}
+	mission.temp_external.Init(conf.TempInternalAddr())
+
 	// LoRa radio
 	mission.lora, err = rf95.New(conf.LoraSPIChannel(), conf.LoraCSPin(), conf.LoraIntPin(), false)
 	if err != nil {
