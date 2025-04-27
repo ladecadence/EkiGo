@@ -165,16 +165,24 @@ func (g *gps) Update() error {
 	// now RMC line
 	g.lineRMC = ""
 	for g.lineRMC == "" {
-		// n := 0
-		// for range 512 {
-		// 	_, err := g.port.Read(char)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	buf[n] = char[0]
-		// 	n += 1
-		// }
-		// try to find RMC data (use same buffer)
+		n := 0
+		tStart := time.Now()
+		for range 512 {
+			b, err := g.port.Read(char)
+			if err != nil {
+				return err
+			}
+			// if we read something
+			if b > 0 {
+				buf[n] = char[0]
+				n += 1
+			}
+			// timeout
+			if tNow := time.Now(); tNow.Sub(tStart) > (time.Second * 5) {
+				return errors.New("Timeout reading serial port")
+			}
+		}
+		// try to find RMC data
 		data := string(buf[:])
 		if strings.Contains(data, "$GNRMC") {
 			fmt.Println("Found RMC")
