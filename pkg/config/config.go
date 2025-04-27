@@ -23,8 +23,8 @@ type Config struct {
 	LoraCSPin      uint8   `toml:"lora_cs_pin"`
 	LoraIntPin     uint8   `toml:"lora_int_pin"`
 	LoraFreq       float64 `toml:"lora_freq"`
-	LoraLowPwr     int     `toml:"lora_low_pwr"`
-	LoraHighPwr    int     `toml:"lora_high_pwr"`
+	LoraLowPwr     uint8   `toml:"lora_low_pwr"`
+	LoraHighPwr    uint8   `toml:"lora_high_pwr"`
 
 	ADCChan     int     `toml:"adc_channel"`
 	ADCCsPin    uint8   `toml:"adc_cs_pin"`
