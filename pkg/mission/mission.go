@@ -93,6 +93,9 @@ func New(conf config.Config) (Mission, error) {
 	// TODO read power selection pin
 	mission.lora.SetTxPower(conf.LoraLowPwr())
 
+	// telemetry
+	mission.telem = telemetry.New(conf.ID(), conf.Msg(), conf.Separator())
+
 	return &mission, nil
 }
 
@@ -195,8 +198,6 @@ func (m *mission) SendTelemetry() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s\n", m.telem.CsvString())
-	fmt.Printf("%s\n", m.telem.AprsString())
 	err = m.lora.Send([]uint8(m.telem.AprsString()))
 	if err != nil {
 		return err
