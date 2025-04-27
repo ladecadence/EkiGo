@@ -156,16 +156,16 @@ func (g *gps) Update() error {
 	// now RMC line
 	g.lineRMC = ""
 	for g.lineRMC == "" {
-		n := 0
-		for range 512 {
-			_, err := g.port.Read(char)
-			if err != nil {
-				return err
-			}
-			buf[n] = char[0]
-			n += 1
-		}
-		// try to find GGA data
+		// n := 0
+		// for range 512 {
+		// 	_, err := g.port.Read(char)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	buf[n] = char[0]
+		// 	n += 1
+		// }
+		// try to find RMC data (use same buffer)
 		data := string(buf[:])
 		if strings.Contains(data, "$GNRMC") {
 			fmt.Println("Found RMC")
