@@ -59,6 +59,7 @@ func (p *Picture) Capture(rotate bool) error {
 		"-o",
 		p.Filename,
 	)
+	fmt.Println(cmd.String())
 	err := cmd.Run()
 	if err != nil {
 		return err
