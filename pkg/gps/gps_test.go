@@ -18,6 +18,11 @@ func TestGPS(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error updating GPS: %v", err)
 		}
+
+		fmt.Printf("%f %s, %f %s, alt: %f, sats: %d",
+			NmeaToDec(gps.Lat()), gps.NS(), NmeaToDec(gps.Lon()), gps.EW(), gps.Alt(), gps.Sats(),
+		)
+
 		h, m, s, err := gps.Time()
 		if err != nil {
 			t.Errorf("Error reading GPS time: %v", err)
