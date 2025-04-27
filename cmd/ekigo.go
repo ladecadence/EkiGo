@@ -58,9 +58,8 @@ func main() {
 			// send telemetry
 			err := mission.UpdateTelemetry(conf)
 			if err != nil {
-				fmt.Printf("Error updating telemetry: %v\n", err)
+				mission.Log().Log(logging.LogError, fmt.Sprintf("Error updating telemetry: %v", err))
 			}
-			fmt.Println("Updated telemetry")
 			mission.SendTelemetry()
 
 			// write datalog
