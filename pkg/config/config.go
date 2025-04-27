@@ -25,7 +25,8 @@ type Config struct {
 	LoraLowPwr  int   `toml:"lora_low_pwr"`
 	LoraHighPwr int   `toml:"lora_high_pwr"`
 
-	ADCCsPin    int     `toml:"adc_cs_pin"`
+	ADCChan     int     `toml:"adc_channel"`
+	ADCCsPin    uint8   `toml:"adc_cs_pin"`
 	ADCVBatt    int     `toml:"adc_v_batt"`
 	ADCVDivider float64 `toml:"adc_v_divider"`
 	ADCVMult    float64 `toml:"adc_v_multiplier"`
@@ -33,8 +34,8 @@ type Config struct {
 	TempInternalAddr string `toml:"temp_int_addr"`
 	TempExternalAddr string `toml:"temp_ext_addr"`
 
-	BaroI2CBus  int `toml:"baro_i2c_bus"`
-	BaroI2CAddr int `toml:"baro_i2c_addr"`
+	BaroI2CBus  uint8  `toml:"baro_i2c_bus"`
+	BaroI2CAddr uint16 `toml:"baro_i2c_addr"`
 
 	PathMainDir   string `toml:"path_main_dir"`
 	PathImgDir    string `toml:"path_img_dir"`
