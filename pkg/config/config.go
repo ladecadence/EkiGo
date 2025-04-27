@@ -19,11 +19,12 @@ type Config struct {
 	GpsPort  string `toml:"gps_port"`
 	GpsSpeed int    `toml:"gps_speed"`
 
-	LoraCSPin   int   `toml:"lora_cs_pin"`
-	LoraIntPin  int   `toml:"lora_int_pin"`
-	LoraFreq    int64 `toml:"lora_freq"`
-	LoraLowPwr  int   `toml:"lora_low_pwr"`
-	LoraHighPwr int   `toml:"lora_high_pwr"`
+	LoraSPIChannel uint8   `toml:"lora_spi_channel"`
+	LoraCSPin      uint8   `toml:"lora_cs_pin"`
+	LoraIntPin     uint8   `toml:"lora_int_pin"`
+	LoraFreq       float64 `toml:"lora_freq"`
+	LoraLowPwr     int     `toml:"lora_low_pwr"`
+	LoraHighPwr    int     `toml:"lora_high_pwr"`
 
 	ADCChan     int     `toml:"adc_channel"`
 	ADCCsPin    uint8   `toml:"adc_cs_pin"`
