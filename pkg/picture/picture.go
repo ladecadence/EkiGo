@@ -73,20 +73,22 @@ func (p *Picture) Capture(rotate bool) error {
 	return nil
 }
 
-func (p *Picture) CaptureSmall(name string, res string) error {
+func (p *Picture) CaptureSmall(name string, res string, rotate bool) error {
 
 	resolution := strings.Split(res, "x")
-
-	cmd := exec.Command(raspistill,
-		"-t",
-		"1000",
-		"--width",
-		resolution[0],
-		"--height",
-		resolution[1],
-		"-o",
-		p.Path+name,
-	)
+	cmd := exec.Command(raspistill)
+	cmd.Args = append(cmd.Args, "-t")
+	cmd.Args = append(cmd.Args, "1000")
+	if rotate == true {
+		cmd.Args = append(cmd.Args, "--rotation")
+		cmd.Args = append(cmd.Args, "180")
+	}
+	cmd.Args = append(cmd.Args, "--width")
+	cmd.Args = append(cmd.Args, resolution[0])
+	cmd.Args = append(cmd.Args, "--height")
+	cmd.Args = append(cmd.Args, resolution[1])
+	cmd.Args = append(cmd.Args, "-o")
+	cmd.Args = append(cmd.Args, p.Filename)
 	err := cmd.Run()
 	if err != nil {
 		return err
