@@ -2,6 +2,7 @@ package mission
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/ladecadence/EkiGo/pkg/config"
 	"github.com/ladecadence/EkiGo/pkg/ds18b20"
@@ -19,6 +20,10 @@ type Mission interface {
 	Gps() gps.GPS
 	Log() logging.Logging
 	DataLog() logging.Logging
+	UpdateTelemetry(config.Config) error
+	SendTelemetry() error
+	Telemetry() telemetry.Telemetry
+	SetTimeGPS(int, int, int) error
 }
 
 type mission struct {
@@ -33,6 +38,7 @@ type mission struct {
 	lora          rf95.RF95
 	telem         telemetry.Telemetry
 	pic           picture.Picture
+	pwrSel        uint8
 }
 
 func New(conf config.Config) (Mission, error) {
@@ -100,4 +106,98 @@ func (m *mission) Log() logging.Logging {
 
 func (m *mission) DataLog() logging.Logging {
 	return m.dataLog
+}
+
+func (m *mission) Telemetry() telemetry.Telemetry {
+	return m.telem
+}
+
+func (m *mission) SetTimeGPS(hour, minute, second int) error {
+	return nil
+}
+
+func (m *mission) UpdateTelemetry(conf config.Config) error {
+	// Update sensor data
+	// GPS
+	err := m.gps.Update()
+	if err != nil {
+		return err
+	}
+	m.log.Log(logging.LogData,
+		fmt.Sprintf("%f%s, %f%s, Alt: %.1fm, Sats: %d, Date: %s, Time: %s",
+			gps.NmeaToDec(m.gps.Lat()),
+			m.gps.NS(),
+			gps.NmeaToDec(m.gps.Lon()),
+			m.gps.EW(),
+			m.gps.Alt(),
+			m.gps.Sats(),
+			m.Gps().Date(),
+			m.Gps().Time(),
+		),
+	)
+
+	// baro
+	err = m.baro.Update()
+	if err != nil {
+		return err
+	}
+	m.log.Log(logging.LogData, fmt.Sprintf("BARO: %f", m.baro.GetPres()))
+
+	// temperatures
+	tin, err := m.temp_internal.Read()
+	if err != nil {
+		return err
+	}
+	m.log.Log(logging.LogData, fmt.Sprintf("TIN: %.2f", tin))
+
+	tout, err := m.temp_external.Read()
+	if err != nil {
+		return err
+	}
+	m.log.Log(logging.LogData, fmt.Sprintf("TOUT: %.2f", tout))
+
+	// Battery, enable reading, read ADC channel and make conversion
+	// enable batt reading TODO
+	// wait 1ms for current to stabilize
+	time.Sleep(time.Millisecond * 1)
+	adcBatt, err := m.adc.Read(conf.ADCVBatt())
+	if err != nil {
+		return err
+	}
+	m.log.Log(logging.LogData, fmt.Sprintf("ADC0: %d", adcBatt))
+
+	// disable batt reading TODO
+	// convert to volts
+	vBatt := conf.ADCVMult() * conf.ADCVDivider() * (float64(adcBatt) * 3.3 / 1023.0)
+	m.log.Log(logging.LogData, fmt.Sprintf("VBATT: %.1f", vBatt))
+
+	// Create telemetry packet
+	m.Telemetry().Update(
+		m.gps.Lat(),
+		m.gps.NS(),
+		m.gps.Lon(),
+		m.gps.EW(),
+		m.gps.Alt(),
+		m.gps.Hdg(),
+		m.gps.Spd(),
+		m.gps.Sats(),
+		vBatt,
+		m.baro.GetPres(),
+		tin,
+		tout,
+		m.pwrSel)
+
+	return nil
+}
+
+func (m *mission) SendTelemetry() error {
+	err := m.log.Log(logging.LogInfo, "Sending telemetry packet...")
+	if err != nil {
+		return err
+	}
+	m.lora.Send([]uint8(m.telem.AprsString()))
+	m.lora.WaitPacketSent()
+	err = m.log.Log(logging.LogInfo, "Telemetry packet sent.")
+	m.led.Blink()
+	return nil
 }
