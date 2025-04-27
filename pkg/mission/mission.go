@@ -196,8 +196,6 @@ func (m *mission) UpdateTelemetry(conf config.Config) error {
 		tout,
 		m.pwrSel)
 
-	fmt.Printf("APRS: %s\n", m.Telemetry().AprsString())
-
 	return nil
 }
 
