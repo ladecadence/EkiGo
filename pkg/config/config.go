@@ -73,7 +73,7 @@ type config struct {
 	BaroI2CAddr_ uint16 `toml:"baro_i2c_addr"`
 
 	PathMainDir_   string `toml:"path_main_dir"`
-	PathImgDir_    string `toml:"path_img_dir"`
+	PathImgDir_    string `toml:"path_images_dir"`
 	PathLogPrefix_ string `toml:"path_log_prefix"`
 
 	SsdvSize_ string `toml:"ssdv_size"`
