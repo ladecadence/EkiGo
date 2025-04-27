@@ -183,22 +183,39 @@ func (t *telemetry) AprsString() string {
 func (t *telemetry) CsvString() string {
 	// gen CSV string
 	csv := ""
+	fmt.Println(csv)
 	csv += t.date + ","
+	fmt.Println(csv)
 	csv += t.time + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%f", decLat(t.lat)) + ","
+	fmt.Println(csv)
 	csv += t.ns + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%f", decLon(t.lon)) + ","
+	fmt.Println(csv)
 	csv += t.ew + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.alt) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.2f", t.vbat) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.tin) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.tout) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.baro) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.hdg) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.spd) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%d", t.sats) + ","
+	fmt.Println(csv)
 	csv += fmt.Sprintf("%.1f", t.arate) + ","
+	fmt.Println(csv)
 	csv += t.date
+	fmt.Println(csv)
 
 	return csv
 }
