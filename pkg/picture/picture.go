@@ -48,17 +48,21 @@ func (p *Picture) UpdateName() {
 
 func (p *Picture) Capture(rotate bool) error {
 	p.UpdateName()
-	var rot = ""
+	cmd := exec.Command(raspistill)
+	cmd.Args = append(cmd.Args, "-t")
+	cmd.Args = append(cmd.Args, "1000")
 	if rotate == true {
-		rot = "--rotation 180"
+		cmd.Args = append(cmd.Args, "--rotation")
+		cmd.Args = append(cmd.Args, "180")
 	}
-	cmd := exec.Command(raspistill,
-		"-t",
-		"1000",
-		rot,
-		"-o",
-		p.Filename,
-	)
+	cmd.Args = append(cmd.Args, "-o")
+	cmd.Args = append(cmd.Args, p.Filename)
+	// 	"-t",
+	// 	"1000",
+	// 	rot,
+	// 	"-o",
+	// 	p.Filename,
+	// )
 	fmt.Println(cmd.String())
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
