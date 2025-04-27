@@ -386,10 +386,6 @@ func (r *rf95) SetFrequency(freq float64) error {
 	err = r.spiWrite(REG_07_FRF_MID, uint8((freq_value>>8)&0xff))
 	err = r.spiWrite(REG_08_FRF_LSB, uint8((freq_value)&0xff))
 
-	// test
-	d, err := r.spiRead(REG_06_FRF_MSB)
-	fmt.Printf("REG_06_FRF_MSB: %#x\n", d)
-
 	r.closeSPI()
 	return err
 }
