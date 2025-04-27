@@ -295,11 +295,8 @@ func (r *rf95) closeSPI() {
 // write one byte of data to register addr
 func (r *rf95) spiWrite(reg uint8, data uint8) error {
 	txBuf := []byte{reg | spiWrite_MASK, data}
-	rxBuf := make([]byte, 2)
 	//rpio.SpiTransmit(reg|spiWrite_MASK, data)
-	err := r.conn.Tx(txBuf, rxBuf)
-	fmt.Printf("spiWrite transmit data: %v\n", txBuf)
-	fmt.Printf("spiWrite recv data: %v\n", rxBuf)
+	err := r.conn.Tx(txBuf, nil)
 	return err
 }
 
@@ -309,7 +306,6 @@ func (r *rf95) spiRead(reg uint8) (uint8, error) {
 	rxBuf := make([]byte, 2)
 	//rpio.SpiExchange(buf)
 	err := r.conn.Tx(txBuf, rxBuf)
-	fmt.Printf("spiRead data: %v\n", rxBuf)
 	return rxBuf[1], err
 }
 
@@ -389,6 +385,11 @@ func (r *rf95) SetFrequency(freq float64) error {
 	err := r.spiWrite(REG_06_FRF_MSB, uint8((freq_value>>16)&0xff))
 	err = r.spiWrite(REG_07_FRF_MID, uint8((freq_value>>8)&0xff))
 	err = r.spiWrite(REG_08_FRF_LSB, uint8((freq_value)&0xff))
+
+	// test
+	d, err := r.spiRead(REG_06_FRF_MSB)
+	fmt.Printf("REG_06_FRF_MSB: %#x\n", d)
+
 	r.closeSPI()
 	return err
 }
