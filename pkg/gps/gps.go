@@ -2,7 +2,6 @@ package gps
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -153,7 +152,7 @@ func (g *gps) Update() error {
 		// try to find GGA data
 		data := string(buf[:])
 		if strings.Contains(data, "$GNGGA") {
-			fmt.Println("Found GGA")
+			//fmt.Println("Found GGA")
 			// cut to the start
 			data = data[strings.Index(data, "$GNGGA"):]
 			// cut to endline
@@ -187,7 +186,7 @@ func (g *gps) Update() error {
 		// try to find RMC data
 		data := string(buf[:])
 		if strings.Contains(data, "$GNRMC") {
-			fmt.Println("Found RMC")
+			//fmt.Println("Found RMC")
 			// cut to the start
 			data = data[strings.Index(data, "$GNRMC"):]
 			// cut to endline

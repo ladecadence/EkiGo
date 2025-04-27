@@ -623,7 +623,6 @@ func New(ch uint8, cs uint8, ip uint8, useI bool) (RF95, error) {
 	rf.spiWrite(REG_01_OP_MODE, MODE_SLEEP|LONG_RANGE_MODE)
 	// check if we are set
 	if d, _ := rf.spiRead(REG_01_OP_MODE); d != (MODE_SLEEP | LONG_RANGE_MODE) {
-		fmt.Printf("LoRa check mode: %#x\n", d)
 		return nil, errors.New("Lora not configured")
 	}
 	// set up FIFO
