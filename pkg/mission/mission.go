@@ -195,9 +195,18 @@ func (m *mission) SendTelemetry() error {
 	if err != nil {
 		return err
 	}
-	m.lora.Send([]uint8(m.telem.AprsString()))
+	err = m.lora.Send([]uint8(m.telem.AprsString()))
+	if err != nil {
+		return err
+	}
 	m.lora.WaitPacketSent()
 	err = m.log.Log(logging.LogInfo, "Telemetry packet sent.")
-	m.led.Blink()
+	if err != nil {
+		return err
+	}
+	err = m.led.Blink()
+	if err != nil {
+		return err
+	}
 	return nil
 }
