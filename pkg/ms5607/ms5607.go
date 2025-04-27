@@ -145,6 +145,28 @@ func (m *ms5607) Update() error {
 
 	m.temp = 2000 + (dt*int64(m.prom[6]))/Pow(2, 23)
 	m.p = ((d1*sens)/Pow(2, 21) - off) / (Pow(2, 15))
+
+	t2 := int64(0)
+	off2 := int64(0)
+	sens2 := int64(0)
+
+	// perform higher order corrections
+	if m.temp < 2000 {
+		t2 = dt * dt / Pow(2, 31)
+		off2 = 61 * (m.temp - 2000) * (m.temp - 2000) / Pow(2, 4)
+		sens2 = 2 * (m.temp - 2000) * (m.temp - 2000)
+
+		if m.temp < -1500 {
+			off2 += 15 * (m.temp + 1500) * (m.temp + 1500)
+			sens2 += 8 * (m.temp + 1500) * (m.temp + 1500)
+		}
+	}
+	m.temp -= t2
+	off -= off2
+	sens -= sens2
+
+	m.p = ((d1 * sens) / (Pow(2, 21) - off)) / Pow(2, 15)
+
 	return nil
 }
 
