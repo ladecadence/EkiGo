@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 
 	"github.com/ladecadence/EkiGo/pkg/config"
 	"github.com/ladecadence/EkiGo/pkg/logging"
@@ -37,6 +38,35 @@ func main() {
 	err = mission.Gps().Update()
 	if err != nil {
 		mission.Log().Log(logging.LogError, fmt.Sprintf("Error updating GPS: %v", err))
+	}
+	h, m, s, err := mission.Gps().Hms()
+	if err != nil {
+		mission.Log().Log(logging.LogError, fmt.Sprintf("Error getting GPS time:: %v", err))
+	} else {
+		err = mission.SetTimeGPS(h, m, s)
+		if err != nil {
+			mission.Log().Log(logging.LogError, fmt.Sprintf("Error setting system time: %v", err))
+		}
+	}
+
+	///////// MAIN LOOP /////////
+	for {
+		// send Telemetry
+		for range conf.PacketRepeat() {
+			// check for commands TODO
+
+			// send telemetry
+			mission.UpdateTelemetry(conf)
+			mission.SendTelemetry()
+
+			// write datalog
+			mission.DataLog().Log(logging.LogClean, mission.Telemetry().CsvString())
+
+			time.Sleep(time.Duration(conf.PacketDelay()) * time.Second)
+		}
+
+		// send SSDV
+		// TODO
 	}
 
 }
