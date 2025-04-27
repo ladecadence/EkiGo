@@ -6,6 +6,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"go.bug.st/serial"
 )
@@ -130,13 +131,21 @@ func (g *gps) Update() error {
 	g.lineGGA = ""
 	for g.lineGGA == "" {
 		n := 0
+		tStart := time.Now()
 		for range 512 {
-			_, err := g.port.Read(char)
+			b, err := g.port.Read(char)
 			if err != nil {
 				return err
 			}
-			buf[n] = char[0]
-			n += 1
+			// if we read something
+			if b > 0 {
+				buf[n] = char[0]
+				n += 1
+			}
+			// timeout
+			if tNow := time.Now(); tNow.Sub(tStart) > (time.Second * 5) {
+				return errors.New("Timeout reading serial port")
+			}
 		}
 
 		// try to find GGA data
