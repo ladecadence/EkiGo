@@ -223,7 +223,7 @@ type RF95 interface {
 	SetFrequency(float64) error
 	SetModeSleep()
 	SetTxPower(uint8)
-	Send([]uint8) bool
+	Send([]uint8) error
 	WaitPacketSent() bool
 	Available() (bool, error)
 	ClearRxBuf()
@@ -455,9 +455,9 @@ func (r *rf95) SetTxPower(p uint8) {
 }
 
 // Send data
-func (r *rf95) Send(data []uint8) bool {
+func (r *rf95) Send(data []uint8) error {
 	if len(data) > MAX_MESSAGE_LEN {
-		return false
+		return errors.New("Too much data")
 	}
 
 	r.WaitPacketSent()
@@ -466,16 +466,19 @@ func (r *rf95) Send(data []uint8) bool {
 
 	// beggining of FIFO
 	r.openSPI()
-	r.spiWrite(REG_0D_FIFO_ADDR_PTR, 0)
+	err := r.spiWrite(REG_0D_FIFO_ADDR_PTR, 0)
 
 	// write data
-	r.spiWriteBuf(REG_00_FIFO, data)
-	r.spiWrite(REG_22_PAYLOAD_LENGTH, uint8(len(data)))
+	err = r.spiWriteBuf(REG_00_FIFO, data)
+	err = r.spiWrite(REG_22_PAYLOAD_LENGTH, uint8(len(data)))
 	r.closeSPI()
+	if err != nil {
+		return err
+	}
 
 	r.setModeTx()
 
-	return true
+	return nil
 }
 
 func (r *rf95) WaitPacketSent() bool {
