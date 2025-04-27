@@ -42,7 +42,7 @@ func (p *Picture) UpdateName() {
 		"-" +
 		time.Now().Format(time.RFC3339) +
 		"-" +
-		string(p.Number) +
+		fmt.Sprintf("%d", p.Number) +
 		".jpg"
 }
 
