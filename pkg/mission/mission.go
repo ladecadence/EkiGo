@@ -103,6 +103,9 @@ func New(conf config.Config) (Mission, error) {
 	// telemetry
 	mission.telem = telemetry.New(conf.ID(), conf.Msg(), conf.Separator())
 
+	// picture
+	mission.pic = picture.New(0, conf.ID(), conf.PathMainDir()+conf.PathImgDir())
+
 	return &mission, nil
 }
 
