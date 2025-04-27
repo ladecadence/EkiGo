@@ -108,7 +108,7 @@ func (p *Picture) AddInfo(file string, id string, subid string, msg string, data
 	ct := gg.NewContextForImage(image)
 
 	// font
-	if err := ct.LoadFontFace("TerminusTTF-4.46.0.ttf", 20); err != nil {
+	if err := ct.LoadFontFace("assets/TerminusTTF-4.46.0.ttf", 20); err != nil {
 		return err
 	}
 	// add texts
