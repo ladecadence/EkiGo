@@ -21,8 +21,9 @@ func TestPictureTake(t *testing.T) {
 	err := pic.Capture(true)
 	if err != nil {
 		t.Errorf("Problem capturing image: %v", err)
+	} else {
+		fmt.Printf("Picture shot: %s\n", pic.Filename)
 	}
-	fmt.Printf("Picture shot: %s\n", pic.Filename)
 
 	// now small picture
 	err = pic.CaptureSmall("ssdv.jpg", "640x480")
