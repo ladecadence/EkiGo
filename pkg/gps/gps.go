@@ -37,8 +37,10 @@ type GPS interface {
 	Sats() int
 	Hdg() float64
 	Spd() float64
-	Time() (int, int, int, error)
-	Date() (int, int, int, error)
+	Date() string
+	Time() string
+	Hms() (int, int, int, error)
+	Dmy() (int, int, int, error)
 }
 
 type gps struct {
@@ -262,8 +264,10 @@ func (g *gps) Alt() float64 { return g.alt }
 func (g *gps) Sats() int    { return g.sats }
 func (g *gps) Hdg() float64 { return g.hdg }
 func (g *gps) Spd() float64 { return g.spd }
+func (g *gps) Date() string { return g.date }
+func (g *gps) Time() string { return g.time }
 
-func (g *gps) Time() (int, int, int, error) {
+func (g *gps) Hms() (int, int, int, error) {
 	if len(g.time) >= 6 {
 		hour, err := strconv.Atoi(g.time[0:2])
 		minute, err := strconv.Atoi(g.time[2:4])
@@ -277,7 +281,7 @@ func (g *gps) Time() (int, int, int, error) {
 	}
 }
 
-func (g *gps) Date() (int, int, int, error) {
+func (g *gps) Dmy() (int, int, int, error) {
 	if len(g.date) >= 6 {
 		day, err := strconv.Atoi(g.date[0:2])
 		month, err := strconv.Atoi(g.date[2:4])

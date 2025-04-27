@@ -23,13 +23,13 @@ func TestGPS(t *testing.T) {
 			NmeaToDec(gps.Lat()), gps.NS(), NmeaToDec(gps.Lon()), gps.EW(), gps.Alt(), gps.Sats(),
 		)
 
-		h, m, s, err := gps.Time()
+		h, m, s, err := gps.Hms()
 		if err != nil {
 			t.Errorf("Error reading GPS time: %v", err)
 		} else {
 			fmt.Printf("GPS time: %v %v %v\n", h, m, s)
 		}
-		d, mn, y, err := gps.Date()
+		d, mn, y, err := gps.Dmy()
 		if err != nil {
 			t.Errorf("Error reading GPS date: %v", err)
 		} else {
