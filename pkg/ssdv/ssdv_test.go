@@ -13,7 +13,7 @@ func TestSSDV(t *testing.T) {
 		t.Errorf("Error encoding SSDV image: %v", err)
 	}
 
-	packet, err := ss.GetPacket(0)
+	packet, err := ss.GetPacket(100)
 	if err != nil {
 		t.Errorf("Error getting SSDV packet: %v", err)
 	}
