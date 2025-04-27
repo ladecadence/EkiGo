@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -88,6 +90,7 @@ func GetConfig(filename string) (Config, error) {
 		return nil, err
 	}
 
+	fmt.Printf("Parsed: %v", conf)
 	return &conf, nil
 }
 
