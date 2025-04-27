@@ -32,7 +32,7 @@ baro_i2c_bus = 1
 baro_i2c_addr = 0x77
 
 path_main_dir = '/home/pi/eki2/'
-path_images_dir = 'image/'
+path_images_dir = 'images/'
 path_log_prefix = 'missionlog'
 
 ssdv_size = '320x240'
