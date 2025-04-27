@@ -16,7 +16,7 @@ func TestMS5607(t *testing.T) {
 		if err != nil {
 			t.Errorf("Problem updating data: %v", err)
 		} else {
-			fmt.Printf("MS5607 data: %fºC, %fmBar\n", ms.GetTemp(), ms.GetPres())
+			fmt.Printf("MS5607 data: %.2fºC, %.2f mBar\n", ms.GetTemp(), ms.GetPres())
 		}
 	}
 }
