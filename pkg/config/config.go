@@ -24,7 +24,7 @@ type Config interface {
 	LoraLowPwr() uint8
 	ADCChan() int
 	ADCCsPin() uint8
-	ADCVBatt() int
+	ADCVBatt() uint8
 	ADCVDivider() float64
 	ADCVMult() float64
 	TempInternalAddr() string
@@ -62,7 +62,7 @@ type config struct {
 
 	ADCChan_     int     `toml:"adc_channel"`
 	ADCCsPin_    uint8   `toml:"adc_cs_pin"`
-	ADCVBatt_    int     `toml:"adc_v_batt"`
+	ADCVBatt_    uint8   `toml:"adc_v_batt"`
 	ADCVDivider_ float64 `toml:"adc_v_divider"`
 	ADCVMult_    float64 `toml:"adc_v_multiplier"`
 
@@ -110,7 +110,7 @@ func (c *config) LoraLowPwr() uint8        { return c.LoraLowPwr_ }
 func (c *config) LoraHighPwr() uint8       { return c.LoraHighPwr_ }
 func (c *config) ADCChan() int             { return c.ADCChan_ }
 func (c *config) ADCCsPin() uint8          { return c.ADCCsPin_ }
-func (c *config) ADCVBatt() int            { return c.ADCVBatt_ }
+func (c *config) ADCVBatt() uint8          { return c.ADCVBatt_ }
 func (c *config) ADCVDivider() float64     { return c.ADCVDivider_ }
 func (c *config) ADCVMult() float64        { return c.ADCVMult_ }
 func (c *config) TempInternalAddr() string { return c.TempInternalAddr_ }
