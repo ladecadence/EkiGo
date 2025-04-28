@@ -1,6 +1,6 @@
 id = 'MISSION'
 subid = '/ID'
-msg = 'High Altitude Balloon mission\ninfo@foo.bar'
+msg = 'High Altitude Balloon mission - info@foo.bar'
 separator = '/'
 packet_repeat = 3
 packet_delay = 5 
