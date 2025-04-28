@@ -41,8 +41,6 @@ func (s *SSDV) Encode() error {
 	cmd.Args = append(cmd.Args, fmt.Sprintf("%d", s.count))
 	cmd.Args = append(cmd.Args, s.fileName)
 	cmd.Args = append(cmd.Args, s.binaryName)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
 		fmt.Printf("ERR: %v", cmd.Stderr)
