@@ -99,7 +99,7 @@ func CreateDefaultConfig() (string, error) {
 		return "", err
 	}
 	configPath := filepath.Join(dir, "EkiGo")
-	err = os.MkdirAll(filepath.Dir(configPath), 0700)
+	err = os.MkdirAll(configPath, 0700)
 	if err != nil {
 		return "", err
 	}
