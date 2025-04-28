@@ -313,7 +313,7 @@ func (m *mission) SendSSDV(conf config.Config) error {
 		m.lora.WaitPacketSent()
 
 		// check if we need to send telemetry between image packets
-		if timeDiff := time.Now().Sub(lastTime); timeDiff > time.Duration(conf.PacketDelay()) {
+		if timeDiff := time.Now().Sub(lastTime); timeDiff > time.Second*time.Duration(conf.PacketDelay()) {
 			err := m.UpdateTelemetry(conf)
 			if err != nil {
 				return err
