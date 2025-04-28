@@ -17,6 +17,7 @@ func main() {
 
 	conf, err := config.GetConfig(*configFile)
 	if err != nil {
+		config.CreateDefaultConfig()
 		panic(err)
 	}
 
