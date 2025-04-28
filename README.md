@@ -3,9 +3,10 @@
 Tracking and telemetry code for the Eki Payloads. Go Code.
 
 Transmits position/telemetry using digital packets and images using SSDV.
-Runs on Raspberry Pi with raspbian, ssdv, and imagemagick.
+Runs on Raspberry Pi with raspbian, and ssdv.
 
-Designed to run on a raspberry pi zero with the stratozero board
+Designed to run on a raspberry pi zero with the stratozero board:
+https://github.com/ladecadence/StratoZero
 
 
 ## Packages:
