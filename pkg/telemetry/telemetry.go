@@ -20,7 +20,7 @@ type Telemetry interface {
 		baro float64,
 		tin float64,
 		tout float64,
-		hpwr uint8)
+		hpwr bool)
 	AprsString() string
 	CsvString() string
 }
@@ -45,7 +45,7 @@ type telemetry struct {
 	time     string
 	sep      string
 	dateTime time.Time
-	hpwr     uint8
+	hpwr     bool
 }
 
 func New(i string, m string, s string) Telemetry {
@@ -71,7 +71,7 @@ func New(i string, m string, s string) Telemetry {
 		arate: 0.0,
 		date:  fmt.Sprintf("%02d-%02d-%d", dt.Day(), dt.Month(), dt.Year()),
 		time:  fmt.Sprintf("%02d:%02d:%02d", dt.Hour(), dt.Minute(), dt.Second()),
-		hpwr:  0,
+		hpwr:  false,
 	}
 }
 
@@ -88,7 +88,7 @@ func (t *telemetry) Update(
 	baro float64,
 	tin float64,
 	tout float64,
-	hpwr uint8) {
+	hpwr bool) {
 
 	// save old altitude for ascension rate
 	oldAlt := t.alt
@@ -169,7 +169,7 @@ func (t *telemetry) AprsString() string {
 	aprs += t.sep
 	aprs += strings.ReplaceAll(t.msg, "\n", " - ")
 	aprs += func() string {
-		if t.hpwr == 1 {
+		if t.hpwr {
 			return " - H"
 		} else {
 			return " - L"
