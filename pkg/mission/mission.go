@@ -2,6 +2,7 @@ package mission
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/ladecadence/EkiGo/pkg/batt"
 	"github.com/ladecadence/EkiGo/pkg/config"
@@ -14,6 +15,7 @@ import (
 	"github.com/ladecadence/EkiGo/pkg/picture"
 	"github.com/ladecadence/EkiGo/pkg/pwrsel"
 	"github.com/ladecadence/EkiGo/pkg/rf95"
+	"github.com/ladecadence/EkiGo/pkg/ssdv"
 	"github.com/ladecadence/EkiGo/pkg/telemetry"
 )
 
@@ -41,6 +43,7 @@ type mission struct {
 	lora          rf95.RF95
 	telem         telemetry.Telemetry
 	pic           picture.Picture
+	ssdv          ssdv.SSDV
 	pwrSel        pwrsel.Pwrsel
 }
 
@@ -112,6 +115,15 @@ func New(conf config.Config) (Mission, error) {
 
 	// picture
 	mission.pic = picture.New(0, conf.ID(), conf.PathMainDir()+conf.PathImgDir())
+
+	// ssdv
+	mission.ssdv = ssdv.New(
+		conf.PathMainDir()+conf.PathImgDir()+conf.SsdvName(),
+		conf.PathMainDir()+conf.PathImgDir(),
+		conf.SsdvName(),
+		conf.ID(),
+		mission.pic.Number,
+	)
 
 	// pwr selection pin
 	mission.pwrSel, err = pwrsel.New(conf.PwrPin())
@@ -260,6 +272,7 @@ func (m *mission) SendSSDV(conf config.Config) error {
 	m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV picture shot: %s", conf.SsdvName()))
 
 	// Encode SSDV picture
+	// Add info to image
 	err = m.pic.AddInfo(conf.PathMainDir()+conf.PathImgDir()+conf.SsdvName(),
 		conf.ID(),
 		conf.SubID(),
@@ -277,6 +290,45 @@ func (m *mission) SendSSDV(conf config.Config) error {
 		return err
 	}
 	m.log.Log(logging.LogInfo, "SSDV info added")
+
+	// launch SSDV to create bin SSDV img
+	err = m.ssdv.Encode()
+	if err != nil {
+		m.log.Log(logging.LogError, fmt.Sprintf("Error encoding SSDV binary file: %v", err))
+		return err
+	}
+
+	// send it
+	err = m.log.Log(logging.LogInfo, "Sending SSDV picture...")
+	if err != nil {
+		return err
+	}
+	lastTime := time.Now()
+	for i := range m.ssdv.Packets {
+		packet, err := m.ssdv.GetPacket(i)
+		if err != nil {
+			return err
+		}
+		m.lora.Send(packet)
+		m.lora.WaitPacketSent()
+
+		// check if we need to send telemetry between image packets
+		if timeDiff := time.Now().Sub(lastTime); timeDiff > time.Duration(conf.PacketDelay()) {
+			err := m.UpdateTelemetry(conf)
+			if err != nil {
+				return err
+			}
+			err = m.SendTelemetry()
+			lastTime = time.Now()
+		}
+
+		time.Sleep(time.Millisecond * 10)
+	}
+
+	err = m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV image, %d packets sent.", m.ssdv.Packets))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
