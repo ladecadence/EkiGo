@@ -110,7 +110,7 @@ func CreateDefaultConfig() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%v\n", data)
+	fmt.Printf("%s\n", data)
 	return nil
 }
 
