@@ -309,7 +309,10 @@ func (m *mission) SendSSDV(conf config.Config) error {
 		if err != nil {
 			return err
 		}
-		m.lora.Send(packet)
+		err = m.lora.Send(packet)
+		if err != nil {
+			return err
+		}
 		m.lora.WaitPacketSent()
 
 		// check if we need to send telemetry between image packets
