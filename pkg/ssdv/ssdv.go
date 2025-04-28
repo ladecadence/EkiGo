@@ -17,7 +17,7 @@ type SSDV struct {
 	count      uint8
 	fileName   string
 	binaryName string
-	packets    uint64
+	Packets    uint64
 }
 
 func New(img string, path string, name string, id string, count uint8) SSDV {
