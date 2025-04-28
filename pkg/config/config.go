@@ -1,6 +1,10 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -88,6 +92,26 @@ func GetConfig(filename string) (Config, error) {
 		return nil, err
 	}
 	return &conf, nil
+}
+
+func CreateDefaultConfig() error {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return err
+	}
+	configPath := filepath.Join(dir, "EkiGo")
+	err = os.MkdirAll(filepath.Dir(configPath), 0700)
+	if err != nil {
+		return err
+	}
+	// empty config
+	empty := config{}
+	data, err := toml.Marshal(empty)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%v\n", data)
+	return nil
 }
 
 // getters
