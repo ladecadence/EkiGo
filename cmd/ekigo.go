@@ -24,7 +24,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Can't open configuration, default configuration file created at %s", file)
+		fmt.Printf("Can't open configuration, default configuration file created at %s\n", file)
 		os.Exit(1)
 	}
 
