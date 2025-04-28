@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/ladecadence/EkiGo/pkg/config"
@@ -15,10 +16,16 @@ func main() {
 	configFile := flag.String("c", "config.toml", "Config file")
 	flag.Parse()
 
+	// try to load config file, if not, create a defualt configuration file
+	// at standard config directory
 	conf, err := config.GetConfig(*configFile)
 	if err != nil {
-		config.CreateDefaultConfig()
-		panic(err)
+		file, err := config.CreateDefaultConfig()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Can't open configuration, default configuration file created at %s", file)
+		os.Exit(1)
 	}
 
 	// now test that configuration is not the default one
