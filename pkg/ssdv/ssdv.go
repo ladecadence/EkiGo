@@ -54,17 +54,17 @@ func (s *SSDV) Encode() error {
 		return err
 	}
 	// calculate number of packets of the file
-	s.packets = uint64(fi.Size()) / 256
+	s.Packets = uint64(fi.Size()) / 256
 
 	return nil
 }
 
 func (s *SSDV) GetPacket(packet uint64) ([]uint8, error) {
-	if s.packets == 0 {
+	if s.Packets == 0 {
 		return nil, errors.New("No packets")
 	}
 
-	if packet > s.packets {
+	if packet > s.Packets {
 		return nil, errors.New("Invalid packet")
 	}
 
