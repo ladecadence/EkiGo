@@ -60,16 +60,25 @@ func main() {
 			if err != nil {
 				mission.Log().Log(logging.LogError, fmt.Sprintf("Error updating telemetry: %v", err))
 			}
-			mission.SendTelemetry()
+			err = mission.SendTelemetry()
+			if err != nil {
+				mission.Log().Log(logging.LogError, fmt.Sprintf("Problem sending telemetry: %v", err))
+			}
 
 			// write datalog
-			mission.DataLog().Log(logging.LogClean, mission.Telemetry().CsvString())
+			err = mission.DataLog().Log(logging.LogClean, mission.Telemetry().CsvString())
+			if err != nil {
+				mission.Log().Log(logging.LogError, fmt.Sprintf("Problem writing datalog: %v", err))
+			}
 
 			time.Sleep(time.Duration(conf.PacketDelay()) * time.Second)
 		}
 
 		// send SSDV
-		mission.SendSSDV(conf)
+		err = mission.SendSSDV(conf)
+		if err != nil {
+			mission.Log().Log(logging.LogError, fmt.Sprintf("Problem sending SSDV: %v", err))
+		}
 		time.Sleep(time.Duration(conf.PacketDelay()) * time.Second)
 	}
 
