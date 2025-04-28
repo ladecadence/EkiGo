@@ -2,8 +2,8 @@ package mission
 
 import (
 	"fmt"
-	"time"
 
+	"github.com/ladecadence/EkiGo/pkg/batt"
 	"github.com/ladecadence/EkiGo/pkg/config"
 	"github.com/ladecadence/EkiGo/pkg/ds18b20"
 	"github.com/ladecadence/EkiGo/pkg/gps"
@@ -12,6 +12,7 @@ import (
 	"github.com/ladecadence/EkiGo/pkg/mcp3002"
 	"github.com/ladecadence/EkiGo/pkg/ms5607"
 	"github.com/ladecadence/EkiGo/pkg/picture"
+	"github.com/ladecadence/EkiGo/pkg/pwrsel"
 	"github.com/ladecadence/EkiGo/pkg/rf95"
 	"github.com/ladecadence/EkiGo/pkg/telemetry"
 )
@@ -33,13 +34,14 @@ type mission struct {
 	gps           gps.GPS
 	led           led.LED
 	adc           mcp3002.MCP3002
+	batt          batt.Batt
 	baro          ms5607.MS5607
 	temp_internal ds18b20.DS18B20
 	temp_external ds18b20.DS18B20
 	lora          rf95.RF95
 	telem         telemetry.Telemetry
 	pic           picture.Picture
-	pwrSel        uint8
+	pwrSel        pwrsel.Pwrsel
 }
 
 func New(conf config.Config) (Mission, error) {
@@ -71,8 +73,13 @@ func New(conf config.Config) (Mission, error) {
 		return nil, err
 	}
 
-	// ADC and battery TODO: Battery enable pin
+	// ADC and battery
 	mission.adc, err = mcp3002.New(conf.ADCCsPin(), conf.ADCChan())
+	if err != nil {
+		return nil, err
+	}
+
+	mission.batt, err = batt.New(conf.BattEnablePin(), conf.ADCVMult(), conf.ADCVDivider())
 	if err != nil {
 		return nil, err
 	}
@@ -105,6 +112,12 @@ func New(conf config.Config) (Mission, error) {
 
 	// picture
 	mission.pic = picture.New(0, conf.ID(), conf.PathMainDir()+conf.PathImgDir())
+
+	// pwr selection pin
+	mission.pwrSel, err = pwrsel.New(conf.PwrPin())
+	if err != nil {
+		return nil, err
+	}
 
 	return &mission, nil
 }
@@ -171,18 +184,25 @@ func (m *mission) UpdateTelemetry(conf config.Config) error {
 
 	// Battery, enable reading, read ADC channel and make conversion
 	// enable batt reading TODO
-	// wait 1ms for current to stabilize
-	time.Sleep(time.Millisecond * 1)
-	adcBatt, err := m.adc.Read(conf.ADCVBatt())
+	// // wait 1ms for current to stabilize
+	// time.Sleep(time.Millisecond * 1)
+	// adcBatt, err := m.adc.Read(conf.ADCVBatt())
+	// if err != nil {
+	// 	return err
+	// }
+	// m.log.Log(logging.LogData, fmt.Sprintf("ADC0: %d", adcBatt))
+
+	// // disable batt reading TODO
+	// // convert to volts
+	// vBatt := conf.ADCVMult() * conf.ADCVDivider() * (float64(adcBatt) * 3.3 / 1023.0)
+	// m.log.Log(logging.LogData, fmt.Sprintf("VBATT: %.1f", vBatt))
+	vBatt, err := m.batt.Read(m.adc, uint8(conf.ADCChan()))
 	if err != nil {
 		return err
 	}
-	m.log.Log(logging.LogData, fmt.Sprintf("ADC0: %d", adcBatt))
-
-	// disable batt reading TODO
-	// convert to volts
-	vBatt := conf.ADCVMult() * conf.ADCVDivider() * (float64(adcBatt) * 3.3 / 1023.0)
 	m.log.Log(logging.LogData, fmt.Sprintf("VBATT: %.1f", vBatt))
+
+	pwrSel := m.pwrSel.Read()
 
 	// Create telemetry packet
 	m.Telemetry().Update(
@@ -198,7 +218,7 @@ func (m *mission) UpdateTelemetry(conf config.Config) error {
 		m.baro.GetPres(),
 		tin,
 		tout,
-		m.pwrSel)
+		pwrSel)
 
 	return nil
 }
