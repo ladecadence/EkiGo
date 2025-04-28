@@ -33,7 +33,7 @@ func main() {
 		conf.Separator() == "" || conf.PathMainDir() == "" ||
 		conf.GpsPort() == "" {
 		fmt.Println("Please edit the configuration file.")
-		panic("")
+		os.Exit(1)
 	}
 
 	// create mission and configure it
