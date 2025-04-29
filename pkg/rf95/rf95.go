@@ -269,21 +269,21 @@ func (r *rf95) openSPI() error {
 	// 	return err
 	// }
 
-	spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", r.channel, r.csel)
+	// spiDev := fmt.Sprintf("/dev/spidev%1d.%1d", r.channel, r.csel)
 
-	// open port
-	var err error
-	r.port, err = spireg.Open(spiDev)
-	if err != nil {
-		return err
-	}
-	//defer p.Close()
+	// // open port
+	// var err error
+	// r.port, err = spireg.Open(spiDev)
+	// if err != nil {
+	// 	return err
+	// }
+	// //defer p.Close()
 
-	// try to create a connection with parameters
-	r.conn, err = r.port.Connect(physic.MegaHertz, spi.Mode0, 8)
-	if err != nil {
-		return err
-	}
+	// // try to create a connection with parameters
+	// r.conn, err = r.port.Connect(physic.MegaHertz, spi.Mode0, 8)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
@@ -291,7 +291,7 @@ func (r *rf95) openSPI() error {
 func (r *rf95) closeSPI() {
 	// rpio.SpiEnd(rpio.Spi0)
 	// rpio.Close()
-	r.port.Close()
+	// r.port.Close()
 }
 
 // write one byte of data to register addr
@@ -611,7 +611,7 @@ func New(ch uint8, cs uint8, ip uint8, useI bool) (RF95, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rf.port.Close()
+	// defer rf.port.Close()
 
 	// try to create a connection with parameters
 	rf.conn, err = rf.port.Connect(physic.MegaHertz, spi.Mode0, 8)
