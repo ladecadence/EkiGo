@@ -326,6 +326,9 @@ func (m *mission) SendSSDV(conf config.Config) error {
 				return err
 			}
 			err = m.SendTelemetry()
+			if err != nil {
+				return err
+			}
 			lastTime = time.Now()
 		}
 
