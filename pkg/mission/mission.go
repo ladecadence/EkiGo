@@ -332,7 +332,8 @@ func (m *mission) SendSSDV(conf config.Config) error {
 			lastTime = time.Now()
 		}
 
-		time.Sleep(time.Millisecond * 10)
+		// wait a bit between packets for decoding on the client
+		time.Sleep(time.Millisecond * 100)
 	}
 
 	err = m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV image, %d packets sent.", m.ssdv.Packets))
