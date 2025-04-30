@@ -291,6 +291,14 @@ func (m *mission) SendSSDV(conf config.Config) error {
 	}
 	m.log.Log(logging.LogInfo, "SSDV info added")
 
+	m.ssdv = ssdv.New(
+		conf.PathMainDir()+conf.PathImgDir()+conf.SsdvName(),
+		conf.PathMainDir()+conf.PathImgDir(),
+		conf.SsdvName(),
+		conf.ID(),
+		m.pic.Number,
+	)
+
 	// launch SSDV to create bin SSDV img
 	err = m.ssdv.Encode()
 	if err != nil {
