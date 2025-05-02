@@ -15,7 +15,7 @@ gps_speed = 9600
 lora_spi_channel = 0
 lora_cs_pin = 0
 lora_int_pin = 25
-lora_freq = 868.5
+lora_freq = 868.7
 lora_low_pwr = 5
 lora_high_pwr = 20
 
