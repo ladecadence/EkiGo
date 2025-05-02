@@ -51,11 +51,11 @@ func (l *led) Blink() error {
 	// Unmap gpio memory when done
 	//defer rpio.Close()
 
-	go func() {
-		l.Pin.Out(gpio.High)
-		time.Sleep(time.Millisecond)
-		l.Pin.Out(gpio.Low)
-	}()
+	//go func() {
+	l.Pin.Out(gpio.High)
+	time.Sleep(time.Millisecond)
+	l.Pin.Out(gpio.Low)
+	//}()
 	return nil
 }
 
@@ -69,15 +69,15 @@ func (l *led) BlinkError() error {
 	// // Unmap gpio memory when done
 	// defer rpio.Close()
 
-	go func() {
-		for range 5 {
-			l.Pin.Out(gpio.High)
-			time.Sleep(time.Millisecond * 5)
-			l.Pin.Out(gpio.Low)
-			time.Sleep(time.Millisecond * 5)
-		}
-		// keep on
+	//go func() {
+	for range 5 {
 		l.Pin.Out(gpio.High)
-	}()
+		time.Sleep(time.Millisecond * 5)
+		l.Pin.Out(gpio.Low)
+		time.Sleep(time.Millisecond * 5)
+	}
+	// keep on
+	l.Pin.Out(gpio.High)
+	//}()
 	return nil
 }
