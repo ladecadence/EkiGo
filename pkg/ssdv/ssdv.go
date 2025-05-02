@@ -43,7 +43,7 @@ func (s *SSDV) Encode() error {
 	cmd.Args = append(cmd.Args, s.binaryName)
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("ERR: %v", cmd.Stderr)
+		fmt.Printf("SSDV command: %v", cmd.Stderr)
 		return err
 	}
 	// ssdv worked, get number of packets and return

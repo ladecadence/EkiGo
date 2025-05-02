@@ -59,7 +59,7 @@ func (p *Picture) Capture(rotate bool) error {
 	cmd.Args = append(cmd.Args, p.Filename)
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("ERR: %v", cmd.Stderr)
+		fmt.Printf("Capture ERR: %v", cmd.Stderr)
 		return err
 	}
 	// if we manage to capture a picture,
