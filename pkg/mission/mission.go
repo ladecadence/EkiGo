@@ -194,20 +194,7 @@ func (m *mission) UpdateTelemetry(conf config.Config) error {
 	}
 	m.log.Log(logging.LogData, fmt.Sprintf("TOUT: %.2f", tout))
 
-	// Battery, enable reading, read ADC channel and make conversion
-	// enable batt reading TODO
-	// // wait 1ms for current to stabilize
-	// time.Sleep(time.Millisecond * 1)
-	// adcBatt, err := m.adc.Read(conf.ADCVBatt())
-	// if err != nil {
-	// 	return err
-	// }
-	// m.log.Log(logging.LogData, fmt.Sprintf("ADC0: %d", adcBatt))
-
-	// // disable batt reading TODO
-	// // convert to volts
-	// vBatt := conf.ADCVMult() * conf.ADCVDivider() * (float64(adcBatt) * 3.3 / 1023.0)
-	// m.log.Log(logging.LogData, fmt.Sprintf("VBATT: %.1f", vBatt))
+	// Battery
 	vBatt, err := m.batt.Read(m.adc, uint8(conf.ADCChan()))
 	if err != nil {
 		return err
