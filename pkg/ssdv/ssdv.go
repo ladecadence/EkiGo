@@ -75,7 +75,7 @@ func (s *SSDV) GetPacket(packet uint64) ([]uint8, error) {
 
 	// create a buffer to read
 	buf := make([]byte, 255)
-	_, err = fi.Seek(int64(packet)*256+1, 0)
+	_, err = fi.Seek((int64(packet)*256)+1, 0)
 	b, err := fi.Read(buf)
 	if err != nil || b < 255 {
 		return nil, errors.New("Cant read data")

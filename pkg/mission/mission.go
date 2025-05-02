@@ -278,6 +278,14 @@ func (m *mission) SendSSDV(conf config.Config) error {
 	}
 	m.log.Log(logging.LogInfo, "SSDV info added")
 
+	m.ssdv = ssdv.New(
+		conf.PathMainDir()+conf.PathImgDir()+conf.SsdvName(),
+		conf.PathMainDir()+conf.PathImgDir(),
+		conf.SsdvName(),
+		conf.ID(),
+		m.pic.Number,
+	)
+
 	// launch SSDV to create bin SSDV img
 	err = m.ssdv.Encode()
 	if err != nil {
@@ -313,10 +321,14 @@ func (m *mission) SendSSDV(conf config.Config) error {
 				return err
 			}
 			err = m.SendTelemetry()
+			if err != nil {
+				return err
+			}
 			lastTime = time.Now()
 		}
 
-		time.Sleep(time.Millisecond * 10)
+		// wait a bit between packets for decoding on the client
+		time.Sleep(time.Millisecond * 100)
 	}
 
 	err = m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV image, %d packets sent.", m.ssdv.Packets))
