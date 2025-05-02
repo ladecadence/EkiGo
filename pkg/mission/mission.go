@@ -313,6 +313,10 @@ func (m *mission) SendSSDV(conf config.Config) error {
 		if err != nil {
 			return err
 		}
+		err = m.log.Log(logging.LogInfo, fmt.Sprintf("SSDV sent packet %d.", i))
+		if err != nil {
+			return err
+		}
 
 		// check if we need to send telemetry between image packets
 		if timeDiff := time.Now().Sub(lastTime); timeDiff > time.Second*time.Duration(conf.PacketDelay()) {
