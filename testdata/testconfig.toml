@@ -2,8 +2,8 @@ id = 'MISSION'
 subid = '/ID'
 msg = 'High Altitude Balloon mission - info@foo.bar'
 separator = '/'
-packet_repeat = 3
-packet_delay = 5 
+packet_repeat = 5
+packet_delay = 10 
 
 batt_enable_pin = 24
 led_pin = 17
