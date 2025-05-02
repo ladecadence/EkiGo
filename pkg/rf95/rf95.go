@@ -492,10 +492,8 @@ func (r *rf95) WaitPacketSent() bool {
 
 		r.openSPI()
 		d, _ := r.spiRead(REG_12_IRQ_FLAGS)
-		fmt.Printf("TXDONE: %0x", d)
 		for (d & TX_DONE) == 0 {
 			d, _ = r.spiRead(REG_12_IRQ_FLAGS)
-			fmt.Printf("TXDONE: %0x", d)
 			time.Sleep(time.Millisecond * 10)
 			//thread::sleep(time::Duration::from_millis(10));
 		}
