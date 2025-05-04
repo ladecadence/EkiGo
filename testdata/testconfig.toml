@@ -1,4 +1,4 @@
-id = 'MISSION'
+id = 'TEST'
 subid = '/ID'
 msg = 'High Altitude Balloon mission - info@foo.bar'
 separator = '/'
